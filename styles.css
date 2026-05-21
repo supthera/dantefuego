@@ -206,7 +206,9 @@ html.fonts-pending .footer-logo-text {
 .collection-header {
   position: relative;
   z-index: 11;
-  text-align: center; padding: 6rem 2rem 3rem;
+  text-align: center;
+  padding: 6rem 2rem 3rem;
+  background: var(--black);
 }
 
 .collection-header::before {
@@ -241,12 +243,16 @@ html.fonts-pending .footer-logo-text {
 #products {
   position: relative;
   z-index: 11;
-  padding: 2rem 4vw 8rem; max-width: 1400px; margin: 0 auto; }
+  background: var(--black);
+  padding: 2rem 4vw 8rem;
+}
 
 .products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 2px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .product-card {
