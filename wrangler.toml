@@ -2,5 +2,9 @@ name = "dantefuego"
 compatibility_date = "2024-01-01"
 pages_build_output_dir = "."
 
-[vars]
-# Set secrets via: wrangler secret put PRINTIFY_TOKEN
+# Cloudflare Pages (Git) settings:
+#   Build command:        npm run build   (or leave empty)
+#   Build output directory: /
+#   Deploy command:       LEAVE EMPTY — do not use `wrangler deploy`
+#
+# CLI deploy only:        npm run deploy
