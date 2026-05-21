@@ -223,7 +223,7 @@ html.fonts-pending .footer-logo-text {
   position: relative;
   z-index: 11;
   text-align: center;
-  padding: 6rem 2rem 3rem;
+  padding: 3rem 2rem 6rem;
   background: var(--black);
 }
 
@@ -251,7 +251,7 @@ html.fonts-pending .footer-logo-text {
   position: relative;
   z-index: 11;
   background: var(--black);
-  padding: 2rem 4vw 8rem;
+  padding: 4rem 4vw 0;
 }
 
 .products-grid {
