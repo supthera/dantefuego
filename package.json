@@ -4,6 +4,12 @@
   "type": "module",
   "scripts": {
     "dev": "node server.mjs",
-    "start": "node server.mjs"
+    "start": "node server.mjs",
+    "deploy": "wrangler pages deploy . --project-name=dantefuego",
+    "deploy:preview": "wrangler pages deploy . --project-name=dantefuego --branch=preview",
+    "health": "curl -s http://localhost:8080/api/health | python3 -m json.tool"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
   }
 }

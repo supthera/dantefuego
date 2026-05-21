@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { fetchPrintifyProducts, fetchPrintifyProduct, jsonResponse } from './lib/printify.js';
+import { getHealthStatus } from './lib/health.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = __dirname;
@@ -23,6 +24,21 @@ const MIME = {
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url || '/', `http://${req.headers.host}`);
+
+    if (url.pathname === '/api/health') {
+      if (req.method !== 'GET') {
+        sendJson(res, { error: 'Method not allowed' }, 405);
+        return;
+      }
+
+      const status = await getHealthStatus({
+        token: process.env.PRINTIFY_TOKEN,
+        shopId: process.env.PRINTIFY_SHOP_ID
+      });
+
+      sendJson(res, status, status.ok ? 200 : 503);
+      return;
+    }
 
     if (url.pathname === '/api/products') {
       if (req.method === 'OPTIONS') {

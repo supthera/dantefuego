@@ -1,5 +1,6 @@
 import { initCursor, initFonts } from './js/site.js';
 import { MOCK_PRODUCTS, animateProductCards, renderProductGrid } from './js/render-product-card.js';
+import { escapeHtml } from './js/product-utils.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -7,6 +8,10 @@ initFonts();
 initCursor();
 
 const API_URL = '/api/products';
+const USE_MOCKS =
+  location.hostname === 'localhost' ||
+  location.hostname === '127.0.0.1' ||
+  new URLSearchParams(location.search).has('mock');
 
 const embersContainer = document.getElementById('embers');
 for (let i = 0; i < 30; i++) {
@@ -61,9 +66,24 @@ async function loadProducts() {
     }
 
     const products = payload.data || [];
-    renderProducts(products.length ? products : MOCK_PRODUCTS);
-  } catch {
-    renderProducts(MOCK_PRODUCTS);
+    if (!products.length && USE_MOCKS) {
+      renderProducts(MOCK_PRODUCTS);
+      return;
+    }
+
+    if (!products.length) {
+      grid.innerHTML = '<div class="loading">No products found</div>';
+      return;
+    }
+
+    renderProducts(products);
+  } catch (error) {
+    if (USE_MOCKS) {
+      renderProducts(MOCK_PRODUCTS);
+      return;
+    }
+
+    grid.innerHTML = `<div class="loading loading-error">${escapeHtml(error.message || 'Unable to load collection')}</div>`;
   }
 }
 
