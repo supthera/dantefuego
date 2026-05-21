@@ -33,10 +33,8 @@ const server = http.createServer(async (req, res) => {
         return;
       }
 
-      const status = await getHealthStatus({
-        token: process.env.PRINTIFY_TOKEN,
-        shopId: process.env.PRINTIFY_SHOP_ID
-      });
+      const { token, shopId, liveTag } = getPrintifyEnv(process.env);
+      const status = await getHealthStatus({ token, shopId, liveTag });
 
       sendJson(res, status, status.ok ? 200 : 503);
       return;
@@ -58,10 +56,8 @@ const server = http.createServer(async (req, res) => {
         return;
       }
 
-      const data = await fetchPrintifyProducts({
-        token: process.env.PRINTIFY_TOKEN,
-        shopId: process.env.PRINTIFY_SHOP_ID
-      });
+      const { token, shopId, liveTag } = getPrintifyEnv(process.env);
+      const data = await fetchPrintifyProducts({ token, shopId, liveTag });
 
       sendJson(res, { data }, 200);
       return;
@@ -101,9 +97,11 @@ const server = http.createServer(async (req, res) => {
         return;
       }
 
+      const { token, shopId, liveTag } = getPrintifyEnv(process.env);
       const data = await fetchPrintifyProduct({
-        token: process.env.PRINTIFY_TOKEN,
-        shopId: process.env.PRINTIFY_SHOP_ID,
+        token,
+        shopId,
+        liveTag,
         productId: productMatch[1]
       });
 

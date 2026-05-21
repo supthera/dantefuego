@@ -17,10 +17,11 @@ export async function onRequest(context) {
   }
 
   try {
-    const { token, shopId } = getPrintifyEnv(context.env);
+    const { token, shopId, liveTag } = getPrintifyEnv(context.env);
     const data = await fetchPrintifyProduct({
       token,
       shopId,
+      liveTag,
       productId: context.params.id
     });
 

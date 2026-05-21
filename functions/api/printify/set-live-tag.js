@@ -1,13 +1,13 @@
-import { getPrintifyEnv } from '../../../lib/env.js';
-import { unlockStuckPrintifyProducts } from '../../../lib/printify-admin.js';
+import { DEFAULT_LIVE_PRODUCT_TAG, getPrintifyEnv } from '../../../lib/env.js';
+import { setLiveTagsOnProducts } from '../../../lib/printify-admin.js';
 import { jsonResponse } from '../../../lib/printify.js';
 
 export async function onRequest(context) {
-  if (context.request.method !== 'POST' && context.request.method !== 'GET') {
+  if (context.request.method !== 'GET' && context.request.method !== 'POST') {
     return jsonResponse({ error: 'GET or POST only' }, 405);
   }
 
-  const { token, shopId } = getPrintifyEnv(context.env);
+  const { token, shopId, liveTag } = getPrintifyEnv(context.env);
 
   if (!token) {
     return jsonResponse({ error: 'Missing Printify token' }, 503);
@@ -24,18 +24,25 @@ export async function onRequest(context) {
     } else {
       const url = new URL(context.request.url);
       const singleId = url.searchParams.get('product_id');
+      const manyIds = url.searchParams.get('product_ids');
       if (singleId) productIds = [singleId];
+      else if (manyIds) productIds = manyIds.split(',').map((id) => id.trim()).filter(Boolean);
     }
 
-    const report = await unlockStuckPrintifyProducts({
+    if (!productIds.length) {
+      return jsonResponse({ error: 'Provide product_id or product_ids' }, 400);
+    }
+
+    const report = await setLiveTagsOnProducts({
       token,
       shopId,
-      productIds
+      productIds,
+      tag: liveTag || DEFAULT_LIVE_PRODUCT_TAG
     });
 
     return jsonResponse(report);
   } catch (error) {
     console.error(error);
-    return jsonResponse({ error: error.message || 'Failed to unlock products' }, 500);
+    return jsonResponse({ error: error.message || 'Failed to set live tags' }, 500);
   }
 }

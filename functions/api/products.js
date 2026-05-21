@@ -17,8 +17,8 @@ export async function onRequest(context) {
   }
 
   try {
-    const { token, shopId } = getPrintifyEnv(context.env);
-    const data = await fetchPrintifyProducts({ token, shopId });
+    const { token, shopId, liveTag } = getPrintifyEnv(context.env);
+    const data = await fetchPrintifyProducts({ token, shopId, liveTag });
 
     return jsonResponse({ data });
   } catch (error) {
