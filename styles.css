@@ -1,0 +1,463 @@
+@font-face {
+  font-family: 'BertholdFraktur';
+  src: url('assets/BertholdFraktur.woff2') format('woff2'),
+       url('assets/BertholdFraktur.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --black: #000000;
+  --red: #8b0000;
+  --red-bright: #cc0000;
+  --gold: #c9a84c;
+  --cream: #f0e6d3;
+  --gray: #111111;
+  --logo-font: 'BertholdFraktur', serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--cream);
+  font-family: "Cormorant Garamond", serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+.cursor {
+  width: 8px; height: 8px;
+  background: var(--red-bright);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9999;
+}
+
+.cursor-ring {
+  width: 32px; height: 32px;
+  border: 1px solid rgba(204,0,0,0.4);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9998;
+}
+
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+  opacity: 0.4; pointer-events: none; z-index: 1000;
+}
+
+html.fonts-pending .hero-logo-pin,
+html.fonts-pending .site-header-logo,
+html.fonts-pending .footer-logo-text {
+  visibility: hidden;
+}
+
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 1.25rem clamp(1.25rem, 4vw, 2.5rem);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.site-header-logo,
+.site-header-nav a {
+  pointer-events: auto;
+}
+
+.site-header-logo {
+  font-family: var(--logo-font);
+  font-size: clamp(1.1rem, 2.5vw, 1.45rem);
+  font-weight: normal;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.site-header-logo:hover {
+  opacity: 1;
+}
+
+.site-header-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.site-header-nav a {
+  font-family: "Cinzel Decorative", serif;
+  font-size: 0.5rem;
+  letter-spacing: 0.4em;
+  color: rgba(240,230,211,0.3);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+
+.site-header-nav a:hover {
+  color: var(--gold);
+}
+
+#hero {
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-logo-pin {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.hero-logo-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  text-align: center;
+}
+
+.hero-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, #1a0000 0%, #000000 70%);
+}
+
+.hero-embers { position: absolute; inset: 0; overflow: hidden; }
+
+.ember {
+  position: absolute;
+  width: 2px; height: 2px;
+  background: var(--red-bright);
+  border-radius: 50%;
+  box-shadow: 0 0 6px 2px rgba(204,0,0,0.6);
+  animation: floatUp linear infinite;
+  opacity: 0;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 0.5; }
+  100% { transform: translateY(-20vh) translateX(var(--drift)); opacity: 0; }
+}
+
+.hero-logo {
+  position: relative;
+  font-family: var(--logo-font);
+  font-size: clamp(4.75rem, 16vw, 12rem);
+  font-weight: normal;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-synthesis: none;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.4), 0 0 24px rgba(139,0,0,0.12);
+  backface-visibility: hidden;
+}
+
+.hero-subtitle {
+  font-family: "Inter", sans-serif;
+  font-size: clamp(0.65rem, 1.6vw, 0.8rem);
+  font-weight: 300;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: rgba(240,230,211,0.45);
+  margin: 0;
+  padding-left: 0.45em;
+}
+
+.logo-dante { color: #a0a0a0; }
+.logo-fuego { color: #cc0000; }
+
+.divider {
+  position: relative;
+  z-index: 11;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--red) 30%, var(--gold) 50%, var(--red) 70%, transparent);
+  margin: 0 auto; width: 80%; opacity: 0.4;
+}
+
+.collection-header {
+  position: relative;
+  z-index: 11;
+  text-align: center; padding: 6rem 2rem 3rem;
+}
+
+.collection-header::before {
+  content: "I";
+  font-family: "Cinzel Decorative", serif;
+  font-size: 20rem; color: rgba(139,0,0,0.04);
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none; line-height: 1;
+}
+
+.collection-eyebrow {
+  font-family: "Cinzel Decorative", serif;
+  font-size: 0.6rem; letter-spacing: 0.5em;
+  color: var(--gold); text-transform: uppercase;
+  margin-bottom: 1rem; opacity: 0.8;
+}
+
+.collection-title {
+  font-family: "Cinzel Decorative", serif;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 400; letter-spacing: 0.1em;
+  color: var(--cream); margin-bottom: 1.5rem;
+}
+
+.collection-subtitle {
+  font-style: italic; font-size: 1.1rem;
+  color: rgba(240,230,211,0.5);
+  max-width: 500px; margin: 0 auto; line-height: 1.8;
+}
+
+#products {
+  position: relative;
+  z-index: 11;
+  padding: 2rem 4vw 8rem; max-width: 1400px; margin: 0 auto; }
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2px;
+}
+
+.product-card {
+  position: relative; overflow: hidden;
+  background: var(--gray); cursor: none;
+  opacity: 0; transform: translateY(40px);
+}
+
+.product-card:hover .product-overlay { opacity: 1; }
+.product-card:hover .product-img { transform: scale(1.05); }
+
+.product-img-wrap { aspect-ratio: 3/4; overflow: hidden; position: relative; }
+
+.product-img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  background: #111;
+}
+
+.product-img-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #111 0%, #1a0000 100%);
+}
+
+.product-img-placeholder span {
+  font-family: "Cinzel Decorative", serif;
+  font-size: 3rem; color: rgba(139,0,0,0.3);
+}
+
+.product-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 50%);
+  opacity: 0; transition: opacity 0.4s ease;
+  display: flex; align-items: flex-end; padding: 2rem;
+}
+
+.product-buy-btn {
+  width: 100%; padding: 0.8rem;
+  background: var(--red); border: none;
+  color: var(--cream);
+  font-family: "Cinzel Decorative", serif;
+  font-size: 0.6rem; letter-spacing: 0.3em;
+  text-transform: uppercase; cursor: none;
+  transition: background 0.3s ease;
+}
+
+.product-buy-btn:hover { background: var(--red-bright); }
+
+.product-info { padding: 1.2rem 1.5rem; border-top: 1px solid rgba(201,168,76,0.1); }
+
+.product-name {
+  font-size: 0.95rem; font-weight: 300;
+  letter-spacing: 0.05em; color: var(--cream);
+  margin-bottom: 0.4rem; line-height: 1.4;
+}
+
+.product-price {
+  font-family: "Cinzel Decorative", serif;
+  font-size: 0.65rem; color: var(--gold); letter-spacing: 0.2em;
+}
+
+.loading {
+  text-align: center; padding: 4rem;
+  font-family: "Cinzel Decorative", serif;
+  font-size: 0.6rem; letter-spacing: 0.4em;
+  color: var(--gold); opacity: 0.6;
+  animation: pulse 1.5s ease infinite;
+  grid-column: 1 / -1;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+footer {
+  position: relative;
+  z-index: 11;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding: 4rem 2rem; text-align: center;
+}
+
+.footer-logo-text {
+  font-family: var(--logo-font);
+  font-size: 2rem; font-weight: normal;
+  margin-bottom: 2rem; opacity: 0.4;
+  letter-spacing: 0.02em;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-synthesis: none;
+}
+
+.footer-tagline {
+  font-style: italic; font-size: 0.9rem;
+  color: rgba(240,230,211,0.3); letter-spacing: 0.1em;
+  margin-bottom: 2rem;
+}
+
+.footer-links { display: flex; gap: 3rem; justify-content: center; flex-wrap: wrap; }
+
+.footer-links a {
+  font-family: "Cinzel Decorative", serif;
+  font-size: 0.5rem; letter-spacing: 0.4em;
+  color: rgba(240,230,211,0.3); text-decoration: none;
+  text-transform: uppercase; transition: color 0.3s;
+}
+
+.footer-links a:hover { color: var(--gold); }
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.92); z-index: 500;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+.modal-overlay.active { opacity: 1; pointer-events: all; }
+
+.modal {
+  background: #0d0d0d;
+  border: 1px solid rgba(201,168,76,0.15);
+  width: min(520px, 90vw); max-height: 90vh; overflow-y: auto; position: relative;
+}
+
+.modal-header {
+  padding: 2rem; border-bottom: 1px solid rgba(255,255,255,0.05);
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+.modal-title {
+  font-family: "Cinzel Decorative", serif;
+  font-size: 0.7rem; letter-spacing: 0.3em; color: var(--gold);
+}
+
+.modal-close {
+  background: none; border: none; color: var(--cream);
+  font-size: 1.2rem; cursor: none; opacity: 0.5; transition: opacity 0.2s;
+}
+
+.modal-close:hover { opacity: 1; }
+
+.modal-body { padding: 2rem; }
+
+.modal-product-name { font-size: 1.4rem; margin-bottom: 0.5rem; font-style: italic; }
+
+.modal-price {
+  font-family: "Cinzel Decorative", serif;
+  font-size: 0.65rem; color: var(--gold); letter-spacing: 0.2em;
+  margin-bottom: 2rem;
+}
+
+.modal-select-label {
+  font-family: "Cinzel Decorative", serif;
+  font-size: 0.55rem; letter-spacing: 0.3em;
+  color: rgba(240,230,211,0.5); margin-bottom: 0.6rem; display: block;
+}
+
+.modal-select {
+  width: 100%; padding: 0.8rem 1rem;
+  background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1);
+  color: var(--cream); font-family: "Cormorant Garamond", serif;
+  font-size: 0.95rem; margin-bottom: 1.5rem; appearance: none;
+}
+
+.payment-methods { display: grid; grid-template-columns: 1fr; gap: 0.8rem; margin-top: 1rem; }
+
+.pay-btn {
+  padding: 1rem; border: none;
+  font-family: "Cinzel Decorative", serif;
+  font-size: 0.6rem; letter-spacing: 0.3em;
+  text-transform: uppercase; cursor: pointer; transition: all 0.3s ease;
+}
+
+.pay-stripe { background: var(--red); color: var(--cream); }
+.pay-stripe:hover { background: var(--red-bright); }
+
+.pay-crypto {
+  background: transparent;
+  border: 1px solid rgba(201,168,76,0.3); color: var(--gold);
+}
+
+.pay-crypto:hover { border-color: var(--gold); background: rgba(201,168,76,0.05); }
+
+.pay-paypal {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.1); color: rgba(240,230,211,0.5);
+}
+
+.pay-paypal:hover { border-color: rgba(255,255,255,0.3); color: var(--cream); }
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: var(--red); }
+
+@media (max-width: 640px) {
+  body { cursor: auto; }
+  .cursor, .cursor-ring { display: none; }
+  .product-card, .product-buy-btn, .modal-close, button, a, select { cursor: pointer; }
+
+  .site-header {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 1rem;
+  }
+
+  .site-header-nav {
+    justify-content: center;
+    gap: 1rem;
+  }
+}
