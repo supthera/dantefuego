@@ -22,8 +22,19 @@ export function formatCents(cents) {
 }
 
 export function getOptionValues(product, type) {
-  const option = (product.options || []).find((entry) => entry.type === type);
-  return (option?.values || []).map((value) => value.title);
+  const optionIdx = getOptionIndex(product, type);
+  if (optionIdx < 0) return [];
+
+  const availableIndexes = new Set(
+    (product.variants || [])
+      .map((variant) => variant.options?.[optionIdx])
+      .filter((value) => value !== undefined && value !== null)
+  );
+
+  const option = product.options[optionIdx];
+  return (option?.values || [])
+    .filter((_, index) => availableIndexes.has(index))
+    .map((value) => value.title);
 }
 
 export function getOptionIndex(product, type) {

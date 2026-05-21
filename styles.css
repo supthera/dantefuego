@@ -718,6 +718,17 @@ html.fonts-pending .footer-logo-text {
   appearance: none;
 }
 
+.product-option-static {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--cream);
+}
+
+.product-option-static .product-option-label {
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
 .product-actions {
   max-width: 24rem;
 }

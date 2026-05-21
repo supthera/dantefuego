@@ -89,7 +89,7 @@ function renderProduct() {
   }
 
   renderOptions();
-  updateGallery(getImagesForColor(product, document.getElementById('colorSelect')?.value || ''));
+  updateGallery(getImagesForColor(product, getVariantSelections().color));
   updatePrice();
   document.getElementById('stripeBtn').addEventListener('click', handleCheckout);
 }
@@ -98,36 +98,13 @@ function renderOptions() {
   const optionsEl = document.getElementById('productOptions');
   const colors = getOptionValues(product, 'color');
   const sizes = getOptionValues(product, 'size');
-  const blocks = [];
 
-  if (colors.length) {
-    blocks.push(`
-      <label class="product-option-label" for="colorSelect">Color</label>
-      <select class="product-select" id="colorSelect">
-        <option value="">Choose color</option>
-        ${colors.map((color) => `<option>${escapeHtml(color)}</option>`).join('')}
-      </select>
-    `);
-  }
-
-  if (sizes.length) {
-    blocks.push(`
-      <label class="product-option-label" for="sizeSelect">Size</label>
-      <select class="product-select" id="sizeSelect">
-        <option value="">Choose size</option>
-        ${sizes.map((size) => `<option>${escapeHtml(size)}</option>`).join('')}
-      </select>
-    `);
-  } else {
-    blocks.push(`
-      <label class="product-option-label" for="sizeSelect">Size</label>
-      <select class="product-select" id="sizeSelect">
-        <option value="One Size" selected>One Size</option>
-      </select>
-    `);
-  }
-
-  optionsEl.innerHTML = blocks.join('');
+  optionsEl.innerHTML = [
+    renderOptionField('color', 'Color', colors),
+    renderOptionField('size', 'Size', sizes)
+  ]
+    .filter(Boolean)
+    .join('');
 
   document.getElementById('colorSelect')?.addEventListener('change', (event) => {
     updateGallery(getImagesForColor(product, event.target.value));
@@ -135,6 +112,37 @@ function renderOptions() {
   });
 
   document.getElementById('sizeSelect')?.addEventListener('change', updatePrice);
+}
+
+function renderOptionField(type, label, values) {
+  if (!values.length) return '';
+
+  const id = `${type}Select`;
+
+  if (values.length === 1) {
+    return `
+      <input type="hidden" id="${id}" value="${escapeHtml(values[0])}">
+      <p class="product-option-static">
+        <span class="product-option-label">${label}</span>
+        ${escapeHtml(values[0])}
+      </p>
+    `;
+  }
+
+  return `
+    <label class="product-option-label" for="${id}">${label}</label>
+    <select class="product-select" id="${id}">
+      <option value="">Choose ${label.toLowerCase()}</option>
+      ${values.map((value) => `<option>${escapeHtml(value)}</option>`).join('')}
+    </select>
+  `;
+}
+
+function getVariantSelections() {
+  return {
+    color: document.getElementById('colorSelect')?.value || '',
+    size: document.getElementById('sizeSelect')?.value || ''
+  };
 }
 
 function updateGallery(images) {
@@ -182,8 +190,7 @@ function setActiveImage(index) {
 }
 
 function updatePrice() {
-  const color = document.getElementById('colorSelect')?.value || '';
-  const size = document.getElementById('sizeSelect')?.value || '';
+  const { color, size } = getVariantSelections();
   const priceEl = document.getElementById('productPrice');
   const variant = findVariant(product, { color, size });
 
@@ -196,8 +203,7 @@ function updatePrice() {
 }
 
 function handleCheckout() {
-  const color = document.getElementById('colorSelect')?.value || '';
-  const size = document.getElementById('sizeSelect')?.value || '';
+  const { color, size } = getVariantSelections();
   const colors = getOptionValues(product, 'color');
   const sizes = getOptionValues(product, 'size');
 
