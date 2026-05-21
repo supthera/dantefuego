@@ -82,7 +82,7 @@ html.fonts-pending .footer-logo-text {
 
 .site-header-logo {
   font-family: var(--logo-font);
-  font-size: clamp(0.95rem, 2.2vw, 1.28rem);
+  font-size: clamp(0.85rem, 2vw, 1.15rem);
   font-weight: normal;
   letter-spacing: 0.02em;
   text-decoration: none;
@@ -175,7 +175,7 @@ html.fonts-pending .footer-logo-text {
 .hero-logo {
   position: relative;
   font-family: var(--logo-font);
-  font-size: clamp(4.15rem, 14vw, 10.5rem);
+  font-size: clamp(3.75rem, 12.5vw, 9.5rem);
   font-weight: normal;
   line-height: 1;
   letter-spacing: 0.02em;
@@ -209,20 +209,19 @@ html.fonts-pending .footer-logo-text {
   -webkit-text-fill-color: transparent;
   color: transparent;
   background-image: linear-gradient(
-    165deg,
-    #666666 0%,
-    #9a9a9a 16%,
-    #f4f4f4 30%,
-    #bdbdbd 44%,
-    #7a7a7a 58%,
-    #ececec 72%,
-    #888888 86%,
-    #5a5a5a 100%
+    168deg,
+    #858585 0%,
+    #a3a3a3 24%,
+    #d2d2d2 42%,
+    #adadad 58%,
+    #949494 76%,
+    #bcbcbc 88%,
+    #828282 100%
   );
   filter:
-    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.14))
-    drop-shadow(0 2px 3px rgba(0, 0, 0, 0.55))
-    drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35));
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.12))
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.42))
+    drop-shadow(0 5px 12px rgba(0, 0, 0, 0.22));
 }
 
 .logo-fuego {
@@ -231,9 +230,9 @@ html.fonts-pending .footer-logo-text {
 
 .hero-logo .logo-dante {
   filter:
-    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.2))
-    drop-shadow(0 3px 6px rgba(0, 0, 0, 0.65))
-    drop-shadow(0 14px 36px rgba(0, 0, 0, 0.42));
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.15))
+    drop-shadow(0 2px 6px rgba(0, 0, 0, 0.48))
+    drop-shadow(0 10px 24px rgba(0, 0, 0, 0.28));
 }
 
 .divider {
@@ -568,7 +567,7 @@ footer {
 
 .footer-logo-text {
   font-family: var(--logo-font);
-  font-size: 1.75rem; font-weight: normal;
+  font-size: 1.55rem; font-weight: normal;
   margin-bottom: 2rem; opacity: 0.4;
   letter-spacing: 0.02em;
   text-rendering: geometricPrecision;
