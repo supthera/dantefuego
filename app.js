@@ -1,5 +1,4 @@
 import { initCursor, initFonts } from './js/site.js';
-import { initLogoGradients } from './js/logo-gradient.js';
 import {
   escapeHtml,
   formatPrice,
@@ -12,7 +11,6 @@ gsap.registerPlugin(ScrollTrigger);
 
 initFonts();
 initCursor();
-initLogoGradients();
 
 const API_URL = '/api/products';
 

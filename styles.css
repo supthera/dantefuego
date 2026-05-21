@@ -82,7 +82,7 @@ html.fonts-pending .footer-logo-text {
 
 .site-header-logo {
   font-family: var(--logo-font);
-  font-size: clamp(1.1rem, 2.5vw, 1.45rem);
+  font-size: clamp(0.95rem, 2.2vw, 1.28rem);
   font-weight: normal;
   letter-spacing: 0.02em;
   text-decoration: none;
@@ -175,7 +175,7 @@ html.fonts-pending .footer-logo-text {
 .hero-logo {
   position: relative;
   font-family: var(--logo-font);
-  font-size: clamp(4.75rem, 16vw, 12rem);
+  font-size: clamp(4.15rem, 14vw, 10.5rem);
   font-weight: normal;
   line-height: 1;
   letter-spacing: 0.02em;
@@ -201,13 +201,13 @@ html.fonts-pending .footer-logo-text {
 .logo-dante,
 .logo-fuego {
   display: inline-block;
+}
+
+.logo-dante {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-}
-
-.logo-dante {
   background-image: linear-gradient(
     165deg,
     #666666 0%,
@@ -226,27 +226,7 @@ html.fonts-pending .footer-logo-text {
 }
 
 .logo-fuego {
-  --shine-x: 50%;
-  --shine-y: 50%;
-  --logo-angle: 165deg;
-  background-size: 280% 280%;
-  background-position: var(--shine-x, 50%) var(--shine-y, 50%);
-  will-change: background-position;
-  background-image: linear-gradient(
-    var(--logo-angle, 165deg),
-    #5a0000 0%,
-    #990000 16%,
-    #ff6666 30%,
-    #cc0000 44%,
-    #880000 58%,
-    #ff4444 72%,
-    #aa0000 86%,
-    #5a0000 100%
-  );
-  filter:
-    drop-shadow(0 1px 0 rgba(255, 120, 120, 0.28))
-    drop-shadow(0 2px 4px rgba(90, 0, 0, 0.55))
-    drop-shadow(0 8px 18px rgba(139, 0, 0, 0.22));
+  color: #cc0000;
 }
 
 .hero-logo .logo-dante {
@@ -254,13 +234,6 @@ html.fonts-pending .footer-logo-text {
     drop-shadow(0 1px 0 rgba(255, 255, 255, 0.2))
     drop-shadow(0 3px 6px rgba(0, 0, 0, 0.65))
     drop-shadow(0 14px 36px rgba(0, 0, 0, 0.42));
-}
-
-.hero-logo .logo-fuego {
-  filter:
-    drop-shadow(0 1px 0 rgba(255, 140, 140, 0.32))
-    drop-shadow(0 3px 8px rgba(90, 0, 0, 0.62))
-    drop-shadow(0 16px 40px rgba(139, 0, 0, 0.28));
 }
 
 .divider {
@@ -595,7 +568,7 @@ footer {
 
 .footer-logo-text {
   font-family: var(--logo-font);
-  font-size: 2rem; font-weight: normal;
+  font-size: 1.75rem; font-weight: normal;
   margin-bottom: 2rem; opacity: 0.4;
   letter-spacing: 0.02em;
   text-rendering: geometricPrecision;

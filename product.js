@@ -1,5 +1,4 @@
 import { initCursor, initFonts } from './js/site.js';
-import { initLogoGradients } from './js/logo-gradient.js';
 import {
   escapeHtml,
   findVariant,
@@ -14,7 +13,6 @@ import {
 
 initFonts();
 initCursor();
-initLogoGradients();
 
 const params = new URLSearchParams(window.location.search);
 const productId = params.get('id');
