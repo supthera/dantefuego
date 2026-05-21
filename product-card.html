@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DanteFuego — Product Card</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: #080808;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 24px;
+      padding: 48px 24px;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    .df-card {
+      width: 260px;
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(145deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: transform 0.35s cubic-bezier(0.23,1,0.32,1), box-shadow 0.35s ease, border-color 0.35s ease;
+      cursor: pointer;
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .df-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(180,30,30,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+      border-color: rgba(180,30,30,0.5);
+    }
+
+    .df-card:hover .df-overlay { opacity: 1; }
+    .df-card:hover .df-img-placeholder { transform: scale(1.06); }
+    .df-card:hover .df-img { transform: scale(1.06); }
+    .df-card:hover .df-ember-1 { opacity: 1; animation: floatEmber 2.5s ease-in-out infinite; }
+    .df-card:hover .df-ember-2 { opacity: 1; animation: floatEmber 3.1s ease-in-out 0.4s infinite; }
+    .df-card:hover .df-ember-3 { opacity: 1; animation: floatEmber 2.8s ease-in-out 0.9s infinite; }
+
+    @keyframes floatEmber {
+      0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0.9; }
+      50%  { transform: translateY(-30px) translateX(6px) scale(0.6); opacity: 0.5; }
+      100% { transform: translateY(-60px) translateX(-4px) scale(0.2); opacity: 0; }
+    }
+
+    .df-img-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      background: #111;
+    }
+
+    /* For real product images from Printify */
+    .df-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.23,1,0.32,1);
+    }
+
+    /* Placeholder shown when no image */
+    .df-img-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #111;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 2.5rem;
+      color: rgba(255,255,255,0.08);
+      transition: transform 0.6s cubic-bezier(0.23,1,0.32,1);
+    }
+
+    .df-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      display: flex;
+      align-items: flex-end;
+      padding: 20px;
+    }
+
+    .df-overlay-btn {
+      width: 100%;
+      padding: 10px;
+      background: rgba(139,0,0,0.85);
+      border: 1px solid rgba(220,50,50,0.4);
+      color: #f0e6d3;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.48rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 4px;
+      backdrop-filter: blur(8px);
+      transition: background 0.2s ease;
+    }
+
+    .df-overlay-btn:hover { background: rgba(180,0,0,0.95); }
+
+    .df-ember-1, .df-ember-2, .df-ember-3 {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #ff4400;
+      box-shadow: 0 0 4px 1px rgba(255,80,0,0.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .df-ember-1 { left: 30%; bottom: 20%; }
+    .df-ember-2 { left: 55%; bottom: 15%; }
+    .df-ember-3 { left: 70%; bottom: 25%; }
+
+    .df-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(139,0,0,0.8);
+      border: 1px solid rgba(200,50,50,0.4);
+      color: #f0c0c0;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.42rem;
+      letter-spacing: 0.25em;
+      padding: 4px 10px;
+      border-radius: 3px;
+      backdrop-filter: blur(6px);
+      text-transform: uppercase;
+    }
+
+    .df-info {
+      padding: 16px 18px 20px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      background: rgba(0,0,0,0.3);
+    }
+
+    .df-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      font-weight: 300;
+      font-style: italic;
+      color: rgba(240,230,211,0.9);
+      margin: 0 0 6px;
+      line-height: 1.35;
+      letter-spacing: 0.03em;
+    }
+
+    .df-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .df-price {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.6rem;
+      color: #c9a84c;
+      letter-spacing: 0.2em;
+    }
+
+    .df-colors {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .df-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.15);
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+
+    .df-swatch:hover { transform: scale(1.4); }
+
+    .df-sizes {
+      display: flex;
+      gap: 5px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .df-size-tag {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.42rem;
+      letter-spacing: 0.15em;
+      color: rgba(240,230,211,0.4);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 3px 7px;
+      border-radius: 3px;
+      transition: color 0.2s, border-color 0.2s;
+      cursor: pointer;
+    }
+
+    .df-size-tag:hover,
+    .df-size-tag.active {
+      color: #c9a84c;
+      border-color: rgba(201,168,76,0.4);
+    }
+
+    .df-divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(201,168,76,0.15), transparent);
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── MOCK CARD 1 ── -->
+  <div class="df-card">
+    <div class="df-img-wrap">
+      <!-- Swap placeholder div for <img class="df-img" src="YOUR_PRINTIFY_IMG_URL"> -->
+      <div class="df-img-placeholder">&#9830;</div>
+      <div class="df-ember-1"></div>
+      <div class="df-ember-2"></div>
+      <div class="df-ember-3"></div>
+      <div class="df-badge">New</div>
+      <div class="df-overlay">
+        <button class="df-overlay-btn">Add to Order</button>
+      </div>
+    </div>
+    <div class="df-info">
+      <p class="df-name">Inferno Mini Chest Script Tee</p>
+      <div class="df-divider"></div>
+      <div class="df-meta">
+        <span class="df-price">$29.99</span>
+        <div class="df-colors">
+          <div class="df-swatch" style="background:#1a1a1a;" title="Black"></div>
+          <div class="df-swatch" style="background:#f0f0f0;" title="White"></div>
+          <div class="df-swatch" style="background:#8b0000;" title="Dark Red"></div>
+        </div>
+      </div>
+      <div class="df-sizes">
+        <span class="df-size-tag active">S</span>
+        <span class="df-size-tag">M</span>
+        <span class="df-size-tag">L</span>
+        <span class="df-size-tag">XL</span>
+        <span class="df-size-tag">2XL</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MOCK CARD 2 ── -->
+  <div class="df-card">
+    <div class="df-img-wrap">
+      <div class="df-img-placeholder">&#9674;</div>
+      <div class="df-ember-1"></div>
+      <div class="df-ember-2"></div>
+      <div class="df-ember-3"></div>
+      <div class="df-overlay">
+        <button class="df-overlay-btn">Add to Order</button>
+      </div>
+    </div>
+    <div class="df-info">
+      <p class="df-name">Dante Alighieri Typography Tee</p>
+      <div class="df-divider"></div>
+      <div class="df-meta">
+        <span class="df-price">$34.99</span>
+        <div class="df-colors">
+          <div class="df-swatch" style="background:#1a1a1a;" title="Black"></div>
+          <div class="df-swatch" style="background:#2c2c2c;" title="Charcoal"></div>
+        </div>
+      </div>
+      <div class="df-sizes">
+        <span class="df-size-tag">S</span>
+        <span class="df-size-tag active">M</span>
+        <span class="df-size-tag">L</span>
+        <span class="df-size-tag">XL</span>
+        <span class="df-size-tag">2XL</span>
+        <span class="df-size-tag">3XL</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Size selector
+    document.querySelectorAll('.df-size-tag').forEach(tag => {
+      tag.addEventListener('click', function() {
+        this.closest('.df-sizes').querySelectorAll('.df-size-tag').forEach(s => s.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Wire up "Add to Order" buttons here
+    document.querySelectorAll('.df-overlay-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        // TODO: open checkout modal
+        console.log('Add to order clicked');
+      });
+    });
+  </script>
+</body>
+</html>

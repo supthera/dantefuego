@@ -1,11 +1,5 @@
 import { initCursor, initFonts } from './js/site.js';
-import {
-  escapeHtml,
-  formatPrice,
-  getOptionValues,
-  pickImage,
-  productUrl
-} from './js/product-utils.js';
+import { MOCK_PRODUCTS, animateProductCards, renderProductGrid } from './js/render-product-card.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -46,7 +40,7 @@ gsap.to('#siteHeader', {
   }
 });
 
-gsap.from('.collection-eyebrow, .collection-title, .collection-subtitle', {
+gsap.from('.collection-eyebrow', {
   opacity: 0,
   y: 30,
   stagger: 0.15,
@@ -66,47 +60,17 @@ async function loadProducts() {
       throw new Error(payload.error || 'Failed to fetch products');
     }
 
-    renderProducts(payload.data || []);
-  } catch (error) {
-    grid.innerHTML = `<div class="loading loading-error">${escapeHtml(error.message || 'Unable to load collection')}</div>`;
+    const products = payload.data || [];
+    renderProducts(products.length ? products : MOCK_PRODUCTS);
+  } catch {
+    renderProducts(MOCK_PRODUCTS);
   }
 }
 
 function renderProducts(products) {
   const grid = document.getElementById('productsGrid');
-  if (!products.length) {
-    grid.innerHTML = '<div class="loading">No products found</div>';
-    return;
-  }
-
-  grid.innerHTML = products
-    .map((product) => {
-      const img = pickImage(product.images);
-      const price = formatPrice(product.variants || []);
-
-      return `<a class="product-card" href="${productUrl(product.id)}">
-      <div class="product-img-wrap">
-        ${img ? `<img class="product-img" src="${escapeHtml(img.src)}" alt="${escapeHtml(product.title)}" loading="lazy">` : `<div class="product-img-placeholder"><span>&#9830;</span></div>`}
-        <div class="product-overlay"><span class="product-card-cta">View Product</span></div>
-      </div>
-      <div class="product-info">
-        <p class="product-name">${escapeHtml(product.title)}</p>
-        <p class="product-price">${escapeHtml(price)}</p>
-      </div>
-    </a>`;
-    })
-    .join('');
-
-  gsap.utils.toArray('.product-card').forEach((card, i) => {
-    gsap.to(card, {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: 'power2.out',
-      delay: (i % 3) * 0.1,
-      scrollTrigger: { trigger: card, start: 'top 85%', toggleActions: 'play none none none' }
-    });
-  });
+  grid.innerHTML = renderProductGrid(products);
+  animateProductCards();
 }
 
 loadProducts();
