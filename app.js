@@ -1,51 +1,20 @@
+import { initCursor, initFonts } from './js/site.js';
+import { initLogoGradients } from './js/logo-gradient.js';
+import {
+  escapeHtml,
+  formatPrice,
+  getOptionValues,
+  pickImage,
+  productUrl
+} from './js/product-utils.js';
+
 gsap.registerPlugin(ScrollTrigger);
 
-Promise.race([
-  document.fonts.load('1em BertholdFraktur'),
-  new Promise((resolve) => setTimeout(resolve, 2500))
-]).finally(() => {
-  document.documentElement.classList.remove('fonts-pending');
-});
+initFonts();
+initCursor();
+initLogoGradients();
 
 const API_URL = '/api/products';
-
-const cursor = document.getElementById('cursor');
-const ring = document.getElementById('cursorRing');
-let mouseX = 0;
-let mouseY = 0;
-let ringX = 0;
-let ringY = 0;
-
-document.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-  gsap.set(cursor, { x: mouseX - 4, y: mouseY - 4 });
-});
-
-gsap.ticker.add(() => {
-  ringX += (mouseX - ringX - 16) * 0.12;
-  ringY += (mouseY - ringY - 16) * 0.12;
-  gsap.set(ring, { x: ringX, y: ringY });
-});
-
-document.querySelectorAll('button, a, select').forEach((el) => {
-  el.addEventListener('mouseenter', () =>
-    gsap.to(ring, {
-      width: 48,
-      height: 48,
-      borderColor: 'rgba(204,0,0,0.8)',
-      duration: 0.2
-    })
-  );
-  el.addEventListener('mouseleave', () =>
-    gsap.to(ring, {
-      width: 32,
-      height: 32,
-      borderColor: 'rgba(204,0,0,0.4)',
-      duration: 0.2
-    })
-  );
-});
 
 const embersContainer = document.getElementById('embers');
 for (let i = 0; i < 30; i++) {
@@ -101,32 +70,8 @@ async function loadProducts() {
 
     renderProducts(payload.data || []);
   } catch (error) {
-    grid.innerHTML = `<div class="loading" style="animation:none;color:rgba(204,0,0,0.75)">${escapeHtml(error.message || 'Unable to load collection')}</div>`;
+    grid.innerHTML = `<div class="loading loading-error">${escapeHtml(error.message || 'Unable to load collection')}</div>`;
   }
-}
-
-function escapeHtml(value) {
-  return String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
-function formatPrice(variants) {
-  const prices = variants.map((variant) => variant.price).filter(Boolean);
-  if (!prices.length) return '';
-
-  const min = Math.min(...prices);
-  const max = Math.max(...prices);
-  const minLabel = `$${(min / 100).toFixed(2)}`;
-
-  return min === max ? minLabel : `${minLabel}+`;
-}
-
-function getOptionValues(product, type) {
-  const option = (product.options || []).find((entry) => entry.type === type);
-  return (option?.values || []).map((value) => value.title);
 }
 
 function renderProducts(products) {
@@ -138,33 +83,19 @@ function renderProducts(products) {
 
   grid.innerHTML = products
     .map((product) => {
-      const img =
-        (product.images || []).find((image) => image.is_default) ||
-        (product.images || []).find((image) => image.position === 'front') ||
-        (product.images || [])[0];
-      const variants = product.variants || [];
-      const price = formatPrice(variants);
-      const colors = getOptionValues(product, 'color');
-      const sizes = getOptionValues(product, 'size');
-      const safeData = JSON.stringify({
-        id: product.id,
-        title: product.title,
-        price,
-        colors,
-        sizes,
-        variants
-      }).replace(/"/g, '&quot;');
+      const img = pickImage(product.images);
+      const price = formatPrice(product.variants || []);
 
-      return `<div class="product-card" data-product="${safeData}">
+      return `<a class="product-card" href="${productUrl(product.id)}">
       <div class="product-img-wrap">
         ${img ? `<img class="product-img" src="${escapeHtml(img.src)}" alt="${escapeHtml(product.title)}" loading="lazy">` : `<div class="product-img-placeholder"><span>&#9830;</span></div>`}
-        <div class="product-overlay"><button class="product-buy-btn">Add to Order</button></div>
+        <div class="product-overlay"><span class="product-card-cta">View Product</span></div>
       </div>
       <div class="product-info">
         <p class="product-name">${escapeHtml(product.title)}</p>
         <p class="product-price">${escapeHtml(price)}</p>
       </div>
-    </div>`;
+    </a>`;
     })
     .join('');
 
@@ -177,63 +108,7 @@ function renderProducts(products) {
       delay: (i % 3) * 0.1,
       scrollTrigger: { trigger: card, start: 'top 85%', toggleActions: 'play none none none' }
     });
-    card.querySelector('.product-buy-btn').addEventListener('click', () => {
-      openModal(JSON.parse(card.dataset.product.replace(/&quot;/g, '"')));
-    });
   });
 }
-
-function openModal(product) {
-  document.getElementById('modalProductName').textContent = product.title;
-  document.getElementById('modalProductPrice').textContent = product.price;
-
-  const colorSelect = document.getElementById('colorSelect');
-  colorSelect.innerHTML =
-    '<option value="">-- Choose Color --</option>' +
-    (product.colors || []).map((color) => `<option>${escapeHtml(color)}</option>`).join('');
-
-  const sizeSelect = document.getElementById('sizeSelect');
-  const sizes = product.sizes || [];
-  sizeSelect.innerHTML =
-    sizes.length > 0
-      ? '<option value="">-- Choose Size --</option>' +
-        sizes.map((size) => `<option>${escapeHtml(size)}</option>`).join('')
-      : '<option value="">-- Choose Size --</option><option>One Size</option>';
-
-  document.getElementById('modalOverlay').classList.add('active');
-  gsap.fromTo('.modal', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' });
-}
-
-function closeModal() {
-  gsap.to('.modal', {
-    y: 20,
-    opacity: 0,
-    duration: 0.3,
-    ease: 'power2.in',
-    onComplete: () => document.getElementById('modalOverlay').classList.remove('active')
-  });
-}
-
-document.getElementById('modalClose').addEventListener('click', closeModal);
-document.getElementById('modalOverlay').addEventListener('click', (e) => {
-  if (e.target.id === 'modalOverlay') closeModal();
-});
-
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeModal();
-});
-
-document.getElementById('stripeBtn').addEventListener('click', () => {
-  const size = document.getElementById('sizeSelect').value;
-  const color = document.getElementById('colorSelect').value;
-  if (!size || !color) {
-    alert('Please select a size and color');
-    return;
-  }
-  alert('Stripe checkout — coming soon!');
-});
-
-document.getElementById('cryptoBtn').addEventListener('click', () => alert('Crypto checkout — coming soon!'));
-document.getElementById('paypalBtn').addEventListener('click', () => alert('PayPal checkout — coming soon!'));
 
 loadProducts();

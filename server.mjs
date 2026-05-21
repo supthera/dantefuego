@@ -2,7 +2,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { fetchPrintifyProducts, jsonResponse } from './lib/printify.js';
+import { fetchPrintifyProducts, fetchPrintifyProduct, jsonResponse } from './lib/printify.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = __dirname;
@@ -43,6 +43,33 @@ const server = http.createServer(async (req, res) => {
       const data = await fetchPrintifyProducts({
         token: process.env.PRINTIFY_TOKEN,
         shopId: process.env.PRINTIFY_SHOP_ID
+      });
+
+      sendJson(res, { data }, 200);
+      return;
+    }
+
+    const productMatch = url.pathname.match(/^\/api\/products\/([^/]+)$/);
+    if (productMatch) {
+      if (req.method === 'OPTIONS') {
+        res.writeHead(204, {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type'
+        });
+        res.end();
+        return;
+      }
+
+      if (req.method !== 'GET') {
+        sendJson(res, { error: 'Method not allowed' }, 405);
+        return;
+      }
+
+      const data = await fetchPrintifyProduct({
+        token: process.env.PRINTIFY_TOKEN,
+        shopId: process.env.PRINTIFY_SHOP_ID,
+        productId: productMatch[1]
       });
 
       sendJson(res, { data }, 200);
