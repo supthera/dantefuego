@@ -1,3 +1,4 @@
+import { getPrintifyEnv } from '../../lib/env.js';
 import { getHealthStatus } from '../../lib/health.js';
 import { jsonResponse } from '../../lib/printify.js';
 
@@ -6,10 +7,8 @@ export async function onRequest(context) {
     return jsonResponse({ error: 'Method not allowed' }, 405);
   }
 
-  const status = await getHealthStatus({
-    token: context.env.PRINTIFY_TOKEN,
-    shopId: context.env.PRINTIFY_SHOP_ID
-  });
+  const { token, shopId } = getPrintifyEnv(context.env);
+  const status = await getHealthStatus({ token, shopId });
 
   return jsonResponse(status, status.ok ? 200 : 503);
 }

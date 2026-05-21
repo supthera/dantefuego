@@ -1,3 +1,4 @@
+import { getPrintifyEnv } from '../../lib/env.js';
 import { fetchPrintifyProducts, jsonResponse } from '../../lib/printify.js';
 
 export async function onRequest(context) {
@@ -16,10 +17,8 @@ export async function onRequest(context) {
   }
 
   try {
-    const data = await fetchPrintifyProducts({
-      token: context.env.PRINTIFY_TOKEN,
-      shopId: context.env.PRINTIFY_SHOP_ID
-    });
+    const { token, shopId } = getPrintifyEnv(context.env);
+    const data = await fetchPrintifyProducts({ token, shopId });
 
     return jsonResponse({ data });
   } catch (error) {
