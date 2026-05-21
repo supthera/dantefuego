@@ -2,6 +2,8 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { getPrintifyEnv } from './lib/env.js';
+import { unlockStuckPrintifyProducts } from './lib/printify-admin.js';
 import { fetchPrintifyProducts, fetchPrintifyProduct, jsonResponse } from './lib/printify.js';
 import { getHealthStatus } from './lib/health.js';
 
@@ -62,6 +64,23 @@ const server = http.createServer(async (req, res) => {
       });
 
       sendJson(res, { data }, 200);
+      return;
+    }
+
+    if (url.pathname === '/api/printify/unlock-stuck') {
+      if (req.method !== 'POST') {
+        sendJson(res, { error: 'Method not allowed' }, 405);
+        return;
+      }
+
+      const { token, shopId } = getPrintifyEnv(process.env);
+      if (!token) {
+        sendJson(res, { error: 'Missing Printify token' }, 503);
+        return;
+      }
+
+      const report = await unlockStuckPrintifyProducts({ token, shopId });
+      sendJson(res, report, 200);
       return;
     }
 
