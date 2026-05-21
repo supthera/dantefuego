@@ -175,7 +175,7 @@ html.fonts-pending .footer-logo-text {
 .hero-logo {
   position: relative;
   font-family: var(--logo-font);
-  font-size: clamp(3.35rem, 11.5vw, 8.5rem);
+  font-size: clamp(3.05rem, 10.5vw, 7.75rem);
   font-weight: normal;
   line-height: 1;
   letter-spacing: 0.02em;
