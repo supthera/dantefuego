@@ -17,15 +17,16 @@ export async function onRequest(context) {
   }
 
   try {
-    const { token, shopId, liveTag } = getPrintifyEnv(context.env);
+    const { token, shopId, liveTag, hiddenProductIds } = getPrintifyEnv(context.env);
     const data = await fetchPrintifyProduct({
       token,
       shopId,
       liveTag,
+      hiddenProductIds,
       productId: context.params.id
     });
 
-    return jsonResponse({ data });
+    return jsonResponse({ data }, 200, { cacheControl: 'private, no-store' });
   } catch (error) {
     console.error(error);
     const status = error.message === 'Product not found' ? 404 : 500;

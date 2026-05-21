@@ -31,7 +31,7 @@ async function loadProduct(id) {
   showLoading();
 
   try {
-    const res = await fetch(`/api/products/${encodeURIComponent(id)}`);
+    const res = await fetch(`/api/products/${encodeURIComponent(id)}`, { cache: 'no-store' });
     const payload = await res.json();
 
     if (!res.ok) {

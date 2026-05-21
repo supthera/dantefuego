@@ -17,10 +17,10 @@ export async function onRequest(context) {
   }
 
   try {
-    const { token, shopId, liveTag } = getPrintifyEnv(context.env);
-    const data = await fetchPrintifyProducts({ token, shopId, liveTag });
+    const { token, shopId, liveTag, hiddenProductIds } = getPrintifyEnv(context.env);
+    const data = await fetchPrintifyProducts({ token, shopId, liveTag, hiddenProductIds });
 
-    return jsonResponse({ data });
+    return jsonResponse({ data }, 200, { cacheControl: 'private, no-store' });
   } catch (error) {
     console.error(error);
     return jsonResponse({ error: error.message || 'Failed to load products' }, 500);

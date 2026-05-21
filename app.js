@@ -58,7 +58,7 @@ async function loadProducts() {
   const grid = document.getElementById('productsGrid');
 
   try {
-    const res = await fetch(API_URL);
+    const res = await fetch(API_URL, { cache: 'no-store' });
     const payload = await res.json();
 
     if (!res.ok) {
