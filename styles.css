@@ -143,7 +143,7 @@ html.fonts-pending .footer-logo-text {
 
 .hero-bg {
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse at center, #1a0000 0%, #000000 70%);
+  background: var(--black);
 }
 
 .hero-embers { position: absolute; inset: 0; overflow: hidden; }
@@ -177,7 +177,7 @@ html.fonts-pending .footer-logo-text {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-synthesis: none;
-  text-shadow: 0 1px 0 rgba(0,0,0,0.4), 0 0 24px rgba(139,0,0,0.12);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.4);
   backface-visibility: hidden;
 }
 
