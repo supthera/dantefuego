@@ -4,6 +4,7 @@ import {
   findVariant,
   formatCents,
   formatPrice,
+  formatProductTitleMarkup,
   getImagesForColor,
   getAvailableSizes,
   getFilteredVariants,
@@ -94,7 +95,7 @@ function renderProduct() {
     pageRoot.innerHTML = productShellMarkup();
   }
 
-  document.getElementById('productTitle').textContent = product.title;
+  document.getElementById('productTitle').innerHTML = formatProductTitleMarkup(product.title);
   document.getElementById('productPrice').textContent = formatPrice(product.variants || []);
 
   const description = stripHtml(product.description);

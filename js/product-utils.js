@@ -6,6 +6,17 @@ export function escapeHtml(value) {
     .replace(/"/g, '&quot;');
 }
 
+export function formatProductTitleMarkup(title) {
+  const value = String(title || '').trim();
+  const match = value.match(/^(.+?)\s(\([^)]+\))$/);
+
+  if (!match) {
+    return escapeHtml(value);
+  }
+
+  return `<span class="product-title-main">${escapeHtml(match[1])}</span><span class="product-title-sub">${escapeHtml(match[2])}</span>`;
+}
+
 export function formatPrice(variants) {
   const prices = variants.map((variant) => variant.price).filter(Boolean);
   if (!prices.length) return '';

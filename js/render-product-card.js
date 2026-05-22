@@ -1,4 +1,4 @@
-import { escapeHtml, formatPrice, pickImage, productUrl } from './product-utils.js';
+import { escapeHtml, formatPrice, formatProductTitleMarkup, pickImage, productUrl } from './product-utils.js';
 
 export const MOCK_PRODUCTS = [
   {
@@ -60,7 +60,7 @@ export function renderProductCard(product) {
       <div class="df-overlay"><span class="df-overlay-btn">View Product</span></div>
     </div>
     <div class="df-info">
-      <p class="df-name">${escapeHtml(product.title)}</p>
+      <p class="df-name">${formatProductTitleMarkup(product.title)}</p>
       <div class="df-divider"></div>
       <div class="df-meta">
         <span class="df-price">${escapeHtml(price)}</span>
