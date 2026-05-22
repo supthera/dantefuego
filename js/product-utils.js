@@ -50,8 +50,28 @@ export function pickImage(images) {
   );
 }
 
-export function productUrl(id) {
-  return `/product.html?id=${encodeURIComponent(id)}`;
+export function productUrl(id, previewSrc) {
+  const params = new URLSearchParams({ id: String(id) });
+  if (previewSrc) params.set('img', previewSrc);
+  return `/product.html?${params.toString()}`;
+}
+
+const imagePreloadCache = new Map();
+
+export function preloadImage(src) {
+  if (!src) return Promise.resolve();
+  if (imagePreloadCache.has(src)) return imagePreloadCache.get(src);
+
+  const promise = new Promise((resolve, reject) => {
+    const image = new Image();
+    image.decoding = 'async';
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = src;
+  }).catch(() => {});
+
+  imagePreloadCache.set(src, promise);
+  return promise;
 }
 
 export function stripHtml(html) {

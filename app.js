@@ -1,6 +1,6 @@
 import { initCursor, initFonts } from './js/site.js';
 import { MOCK_PRODUCTS, animateProductCards, renderProductGrid } from './js/render-product-card.js';
-import { escapeHtml } from './js/product-utils.js';
+import { escapeHtml, preloadImage } from './js/product-utils.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -90,7 +90,34 @@ async function loadProducts() {
 function renderProducts(products) {
   const grid = document.getElementById('productsGrid');
   grid.innerHTML = renderProductGrid(products);
+  initProductPrefetch();
   animateProductCards();
+}
+
+const prefetchedProducts = new Set();
+
+function initProductPrefetch() {
+  const grid = document.getElementById('productsGrid');
+  if (!grid || grid.dataset.prefetchBound) return;
+
+  grid.dataset.prefetchBound = '1';
+  grid.addEventListener(
+    'pointerenter',
+    (event) => {
+      const card = event.target.closest('.df-card[data-product-id]');
+      if (!card) return;
+
+      const id = card.dataset.productId;
+      if (!id || prefetchedProducts.has(id)) return;
+      prefetchedProducts.add(id);
+
+      fetch(`/api/products/${encodeURIComponent(id)}`, { cache: 'no-store' });
+
+      const img = card.querySelector('.df-img');
+      if (img?.src) preloadImage(img.src);
+    },
+    true
+  );
 }
 
 loadProducts();

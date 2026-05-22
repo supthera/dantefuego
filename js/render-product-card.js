@@ -82,10 +82,10 @@ export function renderProductCard(product) {
   const placeholder = product.placeholderGlyph || '&#9830;';
 
   const imageMarkup = img
-    ? `<img class="df-img" src="${escapeHtml(img.src)}" alt="${escapeHtml(product.title)}" loading="lazy">`
+    ? `<img class="df-img" src="${escapeHtml(img.src)}" alt="${escapeHtml(product.title)}" width="900" height="1200" loading="lazy" decoding="async">`
     : `<div class="df-img-placeholder">${placeholder}</div>`;
 
-  return `<a class="df-card" href="${productUrl(product.id)}">
+  return `<a class="df-card" href="${productUrl(product.id, img?.src)}" data-product-id="${escapeHtml(product.id)}">
     <div class="df-img-wrap">
       ${imageMarkup}
       <div class="df-ember df-ember-1"></div>

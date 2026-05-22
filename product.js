@@ -7,6 +7,7 @@ import {
   getImagesForColor,
   getOptionValues,
   pickImage,
+  preloadImage,
   stripHtml,
   uniqueImages
 } from './js/product-utils.js';
@@ -16,6 +17,7 @@ initCursor();
 
 const params = new URLSearchParams(window.location.search);
 const productId = params.get('id');
+const previewImageSrc = params.get('img');
 const pageRoot = document.getElementById('productPage');
 
 let product = null;
@@ -24,12 +26,43 @@ let activeImages = [];
 if (!productId) {
   showError('No product selected.');
 } else {
+  renderProductShell(previewImageSrc);
   loadProduct(productId);
 }
 
-async function loadProduct(id) {
-  showLoading();
+function productShellMarkup() {
+  return `
+    <a class="product-back" href="/#products">Back to Collection</a>
+    <div class="product-layout">
+      <div class="product-gallery">
+        <div class="product-gallery-main">
+          <img id="galleryMain" alt="" width="900" height="1200" decoding="async" fetchpriority="high">
+        </div>
+        <div class="product-gallery-thumbs" id="galleryThumbs"></div>
+      </div>
+      <div class="product-details">
+        <p class="collection-eyebrow">Inferno Collection</p>
+        <h1 id="productTitle"></h1>
+        <p id="productPrice" class="product-detail-price"></p>
+        <div id="productDescription" class="product-description"></div>
+        <div class="product-options" id="productOptions"></div>
+        <div class="product-actions">
+          <button class="pay-btn pay-stripe" id="stripeBtn" type="button" disabled>Pay with Card</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
 
+function renderProductShell(initialImageSrc) {
+  pageRoot.innerHTML = productShellMarkup();
+
+  if (initialImageSrc) {
+    setGalleryImage(document.getElementById('galleryMain'), initialImageSrc, '');
+  }
+}
+
+async function loadProduct(id) {
   try {
     const res = await fetch(`/api/products/${encodeURIComponent(id)}`, { cache: 'no-store' });
     const payload = await res.json();
@@ -46,36 +79,14 @@ async function loadProduct(id) {
   }
 }
 
-function showLoading() {
-  pageRoot.innerHTML = '<div class="product-state loading">Loading product...</div>';
-}
-
 function showError(message) {
   pageRoot.innerHTML = `<div class="product-state product-state-error">${escapeHtml(message)}</div><a class="product-back" href="/#products">Back to Collection</a>`;
 }
 
 function renderProduct() {
-  pageRoot.innerHTML = `
-    <a class="product-back" href="/#products">Back to Collection</a>
-    <div class="product-layout">
-      <div class="product-gallery">
-        <div class="product-gallery-main">
-          <img id="galleryMain" alt="">
-        </div>
-        <div class="product-gallery-thumbs" id="galleryThumbs"></div>
-      </div>
-      <div class="product-details">
-        <p class="collection-eyebrow">Inferno Collection</p>
-        <h1 id="productTitle"></h1>
-        <p id="productPrice" class="product-detail-price"></p>
-        <div id="productDescription" class="product-description"></div>
-        <div class="product-options" id="productOptions"></div>
-        <div class="product-actions">
-          <button class="pay-btn pay-stripe" id="stripeBtn" type="button">Pay with Card</button>
-        </div>
-      </div>
-    </div>
-  `;
+  if (!document.getElementById('galleryMain')) {
+    pageRoot.innerHTML = productShellMarkup();
+  }
 
   document.getElementById('productTitle').textContent = product.title;
   document.getElementById('productPrice').textContent = formatPrice(product.variants || []);
@@ -84,14 +95,22 @@ function renderProduct() {
   const descriptionEl = document.getElementById('productDescription');
   if (description) {
     descriptionEl.textContent = description;
+    descriptionEl.hidden = false;
   } else {
+    descriptionEl.textContent = '';
     descriptionEl.hidden = true;
   }
 
   renderOptions();
   updateGallery(getImagesForColor(product, getVariantSelections().color));
   updatePrice();
-  document.getElementById('stripeBtn').addEventListener('click', handleCheckout);
+
+  const stripeBtn = document.getElementById('stripeBtn');
+  stripeBtn.disabled = false;
+  if (!stripeBtn.dataset.bound) {
+    stripeBtn.dataset.bound = '1';
+    stripeBtn.addEventListener('click', handleCheckout);
+  }
 }
 
 function renderOptions() {
@@ -153,18 +172,22 @@ function updateGallery(images) {
 
   if (!activeImages.length) {
     mainImg.removeAttribute('src');
+    mainImg.classList.remove('is-ready');
     mainImg.alt = product.title;
     thumbsEl.innerHTML = '';
     return;
   }
 
-  setActiveImage(0);
+  const previewIndex = previewImageSrc
+    ? activeImages.findIndex((image) => image.src === previewImageSrc)
+    : -1;
+  const initialIndex = previewIndex >= 0 ? previewIndex : 0;
 
   thumbsEl.innerHTML = activeImages
     .map(
       (image, index) =>
-        `<button type="button" class="product-gallery-thumb${index === 0 ? ' is-active' : ''}" data-index="${index}" aria-label="View image ${index + 1}">
-          <img src="${escapeHtml(image.src)}" alt="">
+        `<button type="button" class="product-gallery-thumb${index === initialIndex ? ' is-active' : ''}" data-index="${index}" aria-label="View image ${index + 1}">
+          <img src="${escapeHtml(image.src)}" alt="" width="72" height="96" loading="lazy" decoding="async">
         </button>`
     )
     .join('');
@@ -174,19 +197,40 @@ function updateGallery(images) {
       setActiveImage(Number(button.dataset.index));
     });
   });
+
+  setActiveImage(initialIndex, { keepVisible: previewIndex >= 0 && initialIndex === previewIndex });
 }
 
-function setActiveImage(index) {
+async function setActiveImage(index, { keepVisible = false } = {}) {
   const image = activeImages[index] || pickImage(activeImages);
   const mainImg = document.getElementById('galleryMain');
   if (!mainImg || !image) return;
 
-  mainImg.src = image.src;
-  mainImg.alt = product.title;
+  await setGalleryImage(mainImg, image.src, product.title, { keepVisible });
 
   document.querySelectorAll('.product-gallery-thumb').forEach((button, buttonIndex) => {
     button.classList.toggle('is-active', buttonIndex === index);
   });
+}
+
+async function setGalleryImage(mainImg, src, alt, { keepVisible = false } = {}) {
+  if (!keepVisible) {
+    mainImg.classList.remove('is-ready');
+  }
+
+  await preloadImage(src);
+  mainImg.src = src;
+  mainImg.alt = alt;
+
+  if (mainImg.decode) {
+    try {
+      await mainImg.decode();
+    } catch {
+      // Browser could not decode; still reveal the image.
+    }
+  }
+
+  mainImg.classList.add('is-ready');
 }
 
 function updatePrice() {
