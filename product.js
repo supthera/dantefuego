@@ -8,7 +8,7 @@ import {
   getAvailableSizes,
   getFilteredVariants,
   getOptionValues,
-  hasMultipleSizes,
+  needsSizeSelection,
   pickImage,
   preloadImage,
   stripHtml,
@@ -152,7 +152,7 @@ function renderSizeOption() {
   const sizes = color ? getAvailableSizes(product, color) : allSizes;
 
   field.innerHTML = renderOptionField('size', 'Size', sizes, {
-    hideSingle: !hasMultipleSizes(product)
+    hideSingle: sizes.length <= 1 && getOptionValues(product, 'size').length <= 1
   });
 
   const sizeSelect = document.getElementById('sizeSelect');
@@ -160,6 +160,8 @@ function renderSizeOption() {
 
   if (previousSize && sizes.includes(previousSize)) {
     sizeSelect.value = previousSize;
+  } else if (sizeSelect.tagName === 'SELECT') {
+    sizeSelect.value = '';
   }
 
   sizeSelect.addEventListener('change', updatePrice);
@@ -264,7 +266,7 @@ function updatePrice() {
   const priceEl = document.getElementById('productPrice');
   const colors = getOptionValues(product, 'color');
   const needsColor = colors.length > 1;
-  const needsSize = hasMultipleSizes(product);
+  const needsSize = needsSizeSelection(product, color);
   const colorReady = !needsColor || color;
   const sizeReady = !needsSize || size;
 
@@ -290,7 +292,7 @@ function updatePrice() {
 async function handleCheckout() {
   const { color, size } = getVariantSelections();
   const colors = getOptionValues(product, 'color');
-  const needsSize = hasMultipleSizes(product);
+  const needsSize = needsSizeSelection(product, color);
 
   if (colors.length > 1 && !color) {
     alert('Please select a color');
