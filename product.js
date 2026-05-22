@@ -282,17 +282,17 @@ function updatePrice() {
   priceEl.textContent = formatPrice(product.variants || []);
 }
 
-function handleCheckout() {
+async function handleCheckout() {
   const { color, size } = getVariantSelections();
   const colors = getOptionValues(product, 'color');
-  const sizes = getOptionValues(product, 'size');
+  const needsSize = hasMultipleSizes(product);
 
-  if (colors.length && !color) {
+  if (colors.length > 1 && !color) {
     alert('Please select a color');
     return;
   }
 
-  if (sizes.length && !size) {
+  if (needsSize && !size) {
     alert('Please select a size');
     return;
   }
@@ -303,5 +303,28 @@ function handleCheckout() {
     return;
   }
 
-  alert('Stripe checkout — coming soon!');
+  const stripeBtn = document.getElementById('stripeBtn');
+  stripeBtn.disabled = true;
+
+  try {
+    const res = await fetch('/api/checkout/create-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        productId: product.id,
+        color,
+        size
+      })
+    });
+    const payload = await res.json();
+
+    if (!res.ok) {
+      throw new Error(payload.error || 'Checkout failed');
+    }
+
+    window.location.href = payload.url;
+  } catch (error) {
+    alert(error.message || 'Unable to start checkout');
+    stripeBtn.disabled = false;
+  }
 }

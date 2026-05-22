@@ -4,7 +4,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getPrintifyEnv } from './lib/env.js';
 import { unlockStuckPrintifyProducts } from './lib/printify-admin.js';
-import { fetchPrintifyProducts, fetchPrintifyProduct, jsonResponse } from './lib/printify.js';
+import { fetchCatalogProduct, fetchCatalogProducts } from './lib/catalog.js';
+import { createCheckoutSession } from './lib/stripe.js';
+import { handleStripeWebhook } from './lib/stripe-webhook.js';
+import { jsonResponse } from './lib/printify.js';
 import { getHealthStatus } from './lib/health.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -33,8 +36,7 @@ const server = http.createServer(async (req, res) => {
         return;
       }
 
-      const { token, shopId, liveTag, hiddenProductIds } = getPrintifyEnv(process.env);
-      const status = await getHealthStatus({ token, shopId, liveTag, hiddenProductIds });
+      const status = await getHealthStatus(process.env);
 
       sendJson(res, status, status.ok ? 200 : 503);
       return;
@@ -56,10 +58,44 @@ const server = http.createServer(async (req, res) => {
         return;
       }
 
-      const { token, shopId, liveTag, hiddenProductIds } = getPrintifyEnv(process.env);
-      const data = await fetchPrintifyProducts({ token, shopId, liveTag, hiddenProductIds });
+      const data = await fetchCatalogProducts(process.env);
 
       sendJson(res, { data }, 200);
+      return;
+    }
+
+    if (url.pathname === '/api/checkout/create-session') {
+      if (req.method === 'OPTIONS') {
+        res.writeHead(204, {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type'
+        });
+        res.end();
+        return;
+      }
+
+      if (req.method !== 'POST') {
+        sendJson(res, { error: 'Method not allowed' }, 405);
+        return;
+      }
+
+      const body = await readJsonBody(req);
+      const session = await createCheckoutSession(process.env, body);
+      sendJson(res, session, 200);
+      return;
+    }
+
+    if (url.pathname === '/api/stripe/webhook') {
+      if (req.method !== 'POST') {
+        sendJson(res, { error: 'Method not allowed' }, 405);
+        return;
+      }
+
+      const rawBody = await readRawBody(req);
+      const signature = req.headers['stripe-signature'] || '';
+      const result = await handleStripeWebhook(process.env, rawBody, signature);
+      sendJson(res, result, 200);
       return;
     }
 
@@ -97,16 +133,13 @@ const server = http.createServer(async (req, res) => {
         return;
       }
 
-      const { token, shopId, liveTag, hiddenProductIds } = getPrintifyEnv(process.env);
-      const data = await fetchPrintifyProduct({
-        token,
-        shopId,
-        liveTag,
-        hiddenProductIds,
-        productId: productMatch[1]
-      });
-
-      sendJson(res, { data }, 200);
+      try {
+        const data = await fetchCatalogProduct(process.env, productMatch[1]);
+        sendJson(res, { data }, 200);
+      } catch (error) {
+        const status = error.message === 'Product not found' ? 404 : 500;
+        sendJson(res, { error: error.message || 'Failed to load product' }, status);
+      }
       return;
     }
 
@@ -161,4 +194,28 @@ function loadEnv(filePath) {
     const value = trimmed.slice(eq + 1).trim().replace(/^['"]|['"]$/g, '');
     if (!process.env[key]) process.env[key] = value;
   }
+}
+
+function readJsonBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on('data', (chunk) => chunks.push(chunk));
+    req.on('end', () => {
+      try {
+        resolve(JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}'));
+      } catch (error) {
+        reject(new Error('Invalid JSON body'));
+      }
+    });
+    req.on('error', reject);
+  });
+}
+
+function readRawBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on('data', (chunk) => chunks.push(chunk));
+    req.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+    req.on('error', reject);
+  });
 }

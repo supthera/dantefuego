@@ -8,3 +8,9 @@ pages_build_output_dir = "."
 #   Deploy command:       LEAVE EMPTY — do not use `wrangler deploy`
 #
 # CLI deploy only:        npm run deploy
+#
+# Optional D1 order log (see docs/manual-fulfillment.md):
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "dantefuego-orders"
+# database_id = "<your-database-id>"

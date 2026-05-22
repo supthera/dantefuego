@@ -1,5 +1,5 @@
-import { getPrintifyEnv } from '../../lib/env.js';
-import { fetchPrintifyProducts, jsonResponse } from '../../lib/printify.js';
+import { fetchCatalogProduct, fetchCatalogProducts } from '../../lib/catalog.js';
+import { jsonResponse } from '../../lib/printify.js';
 
 export async function onRequest(context) {
   if (context.request.method === 'OPTIONS') {
@@ -17,8 +17,7 @@ export async function onRequest(context) {
   }
 
   try {
-    const { token, shopId, liveTag, hiddenProductIds } = getPrintifyEnv(context.env);
-    const data = await fetchPrintifyProducts({ token, shopId, liveTag, hiddenProductIds });
+    const data = await fetchCatalogProducts(context.env);
 
     return jsonResponse({ data }, 200, { cacheControl: 'private, no-store' });
   } catch (error) {
