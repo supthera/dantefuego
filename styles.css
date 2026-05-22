@@ -293,7 +293,7 @@ html.fonts-pending .footer-logo-text {
   position: relative;
   z-index: 11;
   background: var(--black);
-  padding: 4rem 4vw 0;
+  padding: 4rem 4vw 8rem;
 }
 
 .products-grid {
