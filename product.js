@@ -6,6 +6,7 @@ import {
   formatPrice,
   getImagesForColor,
   getAvailableSizes,
+  getFilteredVariants,
   getOptionValues,
   pickImage,
   preloadImage,
@@ -256,8 +257,17 @@ async function setGalleryImage(mainImg, src, alt, { keepVisible = false } = {}) 
 function updatePrice() {
   const { color, size } = getVariantSelections();
   const priceEl = document.getElementById('productPrice');
-  const variant = findVariant(product, { color, size });
+  const colors = getOptionValues(product, 'color');
+  const sizes = getAvailableSizes(product, color);
+  const selectionComplete =
+    (colors.length <= 1 || color) && (sizes.length <= 1 || size);
 
+  if (!selectionComplete) {
+    priceEl.textContent = formatPrice(getFilteredVariants(product, { color }));
+    return;
+  }
+
+  const variant = findVariant(product, { color, size });
   if (variant?.price) {
     priceEl.textContent = formatCents(variant.price);
     return;

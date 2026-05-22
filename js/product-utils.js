@@ -226,21 +226,15 @@ export function stripHtml(html) {
   return (div.textContent || '').trim();
 }
 
-export function findVariant(product, { color, size }) {
+export function getFilteredVariants(product, { color = '', size = '' } = {}) {
   const colorIdx = getOptionIndex(product, 'color');
-  const sizeIdx = getOptionIndex(product, 'size');
   const colorValues = colorIdx >= 0 ? product.options[colorIdx].values || [] : [];
-  const sizeValues = sizeIdx >= 0 ? product.options[sizeIdx].values || [] : [];
   const colorVal =
     colorIdx >= 0 && color
       ? colorValues.findIndex((value) => value.title === color)
       : -1;
-  const sizeVal =
-    sizeIdx >= 0 && size
-      ? sizeValues.findIndex((value) => value.title === size)
-      : -1;
 
-  return (product.variants || []).find((variant) => {
+  return (product.variants || []).filter((variant) => {
     const variantColor = resolveSelectionIndex(colorValues, variant.options?.[colorIdx]);
     const variantSizeTitle = getVariantSizeTitle(variant, product);
     const matchesColor =
@@ -248,6 +242,16 @@ export function findVariant(product, { color, size }) {
     const matchesSize = !size || variantSizeTitle === size;
     return matchesColor && matchesSize;
   });
+}
+
+export function findVariant(product, { color, size }) {
+  const colors = getOptionValues(product, 'color');
+  const sizes = getAvailableSizes(product, color);
+
+  if (colors.length > 1 && !color) return null;
+  if (sizes.length > 1 && !size) return null;
+
+  return getFilteredVariants(product, { color, size })[0] || null;
 }
 
 export function getImagesForColor(product, color) {
