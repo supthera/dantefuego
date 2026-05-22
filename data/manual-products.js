@@ -60,18 +60,18 @@ export default {
     {
       id: 'manual-df-x-converse',
       published: true,
-      title: 'DF x Converse',
+      title: 'DF x Converse BL-153 (Blood Leopard)',
       description:
-        'Custom Converse Chuck Taylor high-tops with red leopard canvas, gold eyelets, Dante Fuego heel branding, and a platform lug sole. Ships after manual procurement.',
+        'Custom Converse Chuck Taylor high-tops with blood leopard canvas, gold eyelets, Dante Fuego heel branding, and a platform lug sole. Ships after manual procurement.',
       images: converseImages,
       options: [
-        { type: 'color', values: [{ title: 'Red Leopard' }] },
+        { type: 'color', values: [{ title: 'Blood Leopard' }] },
         { type: 'size', values: converseSizes.map((title) => ({ title: `US ${title}` })) }
       ],
       variants: converseSizes.map((size, index) => ({
         id: `us-${size}`,
         price: 15000,
-        title: `Red Leopard / US ${size}`,
+        title: `Blood Leopard / US ${size}`,
         is_enabled: true,
         is_default: size === '10',
         options: [0, index]
