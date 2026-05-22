@@ -268,7 +268,12 @@ function updatePrice() {
   const colorReady = !needsColor || color;
   const sizeReady = !needsSize || size;
 
-  if (!colorReady || !sizeReady) {
+  if (!colorReady) {
+    priceEl.textContent = formatPrice(product.variants || []);
+    return;
+  }
+
+  if (!sizeReady) {
     priceEl.textContent = formatPrice(getFilteredVariants(product, { color }));
     return;
   }

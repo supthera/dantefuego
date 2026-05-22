@@ -108,7 +108,21 @@ function variantMatchesSize(variant, product, size) {
     }
   }
 
-  return normalizeOptionLabel(getVariantSizeTitle(variant, product)) === normalizedSize;
+  return normalizeOptionLabel(getVariantSizeLabel(variant, product)) === normalizedSize;
+}
+
+function getVariantSizeLabel(variant, product) {
+  const sizeIdx = getOptionIndex(product, 'size');
+  if (sizeIdx >= 0) {
+    const sizeValues = product.options[sizeIdx]?.values || [];
+    const resolved = resolveSelectionIndex(sizeValues, variant.options?.[sizeIdx]);
+    if (resolved !== null) {
+      const title = sizeValues[resolved]?.title || '';
+      if (title) return title;
+    }
+  }
+
+  return getVariantSizeTitle(variant, product);
 }
 
 function getVariantSizeTitle(variant, product) {
@@ -156,7 +170,7 @@ function getSizesFromVariantTitles(product) {
   const sizes = new Set();
 
   for (const variant of product.variants || []) {
-    const sizeTitle = getVariantSizeTitle(variant, product);
+    const sizeTitle = getVariantSizeLabel(variant, product);
     if (sizeTitle) sizes.add(sizeTitle);
   }
 
@@ -214,7 +228,7 @@ export function getOptionValues(product, type) {
     .map((value) => value.title);
 
   if (type === 'size') {
-    return mergeSizeValues(titles, product);
+    return sortSizeTitles([...new Set(titles)]);
   }
 
   return titles;
@@ -236,7 +250,7 @@ export function getAvailableSizes(product, color = '') {
     const variantColor = resolveSelectionIndex(colorValues, variant.options?.[colorIdx]);
     if (variantColor !== colorVal) continue;
 
-    const sizeTitle = getVariantSizeTitle(variant, product);
+    const sizeTitle = getVariantSizeLabel(variant, product);
     if (sizeTitle) sizes.add(sizeTitle);
   }
 
