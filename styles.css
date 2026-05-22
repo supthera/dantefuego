@@ -41,7 +41,22 @@ body {
     85.714285714286%, 99.9% { cursor: url('/assets/cursor-flame/6.png') 0 0, auto; }
   }
 
-  body {
+  @keyframes gun-cursor {
+    0%, 54.445454545455%, 100% { cursor: url('/assets/cursor-gun/0.png') 1 6, auto; }
+    54.545454545455%, 58.990909090909% { cursor: url('/assets/cursor-gun/1.png') 1 6, auto; }
+    59.090909090909%, 63.536363636364% { cursor: url('/assets/cursor-gun/2.png') 1 6, auto; }
+    63.636363636364%, 68.081818181818% { cursor: url('/assets/cursor-gun/3.png') 1 6, auto; }
+    68.181818181818%, 86.263636363636% { cursor: url('/assets/cursor-gun/4.png') 1 6, auto; }
+    86.363636363636%, 90.809090909091% { cursor: url('/assets/cursor-gun/5.png') 1 6, auto; }
+    90.909090909091%, 95.354545454545% { cursor: url('/assets/cursor-gun/6.png') 1 6, auto; }
+    95.454545454545%, 99.9% { cursor: url('/assets/cursor-gun/7.png') 1 6, auto; }
+  }
+
+  body:not(.page-product) {
+    animation: gun-cursor 1.8333333333333s linear infinite;
+  }
+
+  body.page-product {
     animation: flame-cursor 1.1666666666667s linear infinite;
   }
 
