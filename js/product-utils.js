@@ -11,10 +11,7 @@ export function formatPrice(variants) {
   if (!prices.length) return '';
 
   const min = Math.min(...prices);
-  const max = Math.max(...prices);
-  const minLabel = `$${(min / 100).toFixed(2)}`;
-
-  return min === max ? minLabel : `${minLabel}+`;
+  return `$${(min / 100).toFixed(2)}`;
 }
 
 export function formatCents(cents) {
