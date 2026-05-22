@@ -5,7 +5,7 @@ Every product on the site is paid through **Stripe Checkout**. After payment, th
 | Source | Where it lives | After payment |
 |--------|----------------|---------------|
 | **Printify** | Printify catalog (`site-live` tag) | Order submitted to Printify automatically |
-| **Manual** | [`data/manual-products.json`](../data/manual-products.json) | Email sent to you to procure and ship |
+| **Manual** | [`data/manual-products.js`](../data/manual-products.js) | Email sent to you to procure and ship |
 
 Printify products get `fulfillment: "printify"` automatically. Manual products get `fulfillment: "manual"` automatically.
 
@@ -13,7 +13,7 @@ Printify products get `fulfillment: "printify"` automatically. Manual products g
 
 # Manual fulfillment playbook
 
-Use this when you add items in [`data/manual-products.json`](../data/manual-products.json) that are **not** in Printify — limited drops, third-party gear you buy yourself, etc.
+Use this when you add items in [`data/manual-products.js`](../data/manual-products.js) that are **not** in Printify — limited drops, third-party gear you buy yourself, etc.
 
 ## What happens automatically
 
@@ -48,7 +48,7 @@ Requirements:
 
 ## Adding manual products
 
-Edit [`data/manual-products.json`](../data/manual-products.json):
+Edit [`data/manual-products.js`](../data/manual-products.js):
 
 - Use IDs prefixed with `manual-` (e.g. `manual-limited-hat`).
 - Set `"published": true` to show on the site.
