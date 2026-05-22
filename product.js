@@ -8,6 +8,7 @@ import {
   getAvailableSizes,
   getFilteredVariants,
   getOptionValues,
+  hasMultipleSizes,
   pickImage,
   preloadImage,
   stripHtml,
@@ -146,9 +147,13 @@ function renderSizeOption() {
   if (!field) return;
 
   const previousSize = document.getElementById('sizeSelect')?.value || '';
-  const sizes = getAvailableSizes(product, getVariantSelections().color);
+  const color = getVariantSelections().color;
+  const allSizes = getOptionValues(product, 'size');
+  const sizes = color ? getAvailableSizes(product, color) : allSizes;
 
-  field.innerHTML = renderOptionField('size', 'Size', sizes, { hideSingle: true });
+  field.innerHTML = renderOptionField('size', 'Size', sizes, {
+    hideSingle: !hasMultipleSizes(product)
+  });
 
   const sizeSelect = document.getElementById('sizeSelect');
   if (!sizeSelect) return;
@@ -258,11 +263,12 @@ function updatePrice() {
   const { color, size } = getVariantSelections();
   const priceEl = document.getElementById('productPrice');
   const colors = getOptionValues(product, 'color');
-  const sizes = getAvailableSizes(product, color);
-  const selectionComplete =
-    (colors.length <= 1 || color) && (sizes.length <= 1 || size);
+  const needsColor = colors.length > 1;
+  const needsSize = hasMultipleSizes(product);
+  const colorReady = !needsColor || color;
+  const sizeReady = !needsSize || size;
 
-  if (!selectionComplete) {
+  if (!colorReady || !sizeReady) {
     priceEl.textContent = formatPrice(getFilteredVariants(product, { color }));
     return;
   }

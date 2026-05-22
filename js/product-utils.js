@@ -73,13 +73,32 @@ function resolveSelectionIndex(values, selection) {
   return null;
 }
 
+function findColorValueIndex(colorValues, colorTitle) {
+  if (!colorTitle) return -1;
+  const normalized = colorTitle.trim().toLowerCase();
+  return colorValues.findIndex(
+    (value) => String(value.title || '').trim().toLowerCase() === normalized
+  );
+}
+
 function getVariantSizeTitle(variant, product) {
   const sizeIdx = getOptionIndex(product, 'size');
+  const colorTitles = new Set(getOptionValues(product, 'color').map((title) => title.toLowerCase()));
+  const knownSizeTitles =
+    sizeIdx >= 0
+      ? new Set(
+          (product.options[sizeIdx]?.values || []).map((value) =>
+            String(value.title || '').trim().toLowerCase()
+          )
+        )
+      : new Set();
+
   if (sizeIdx >= 0) {
     const sizeValues = product.options[sizeIdx]?.values || [];
     const resolved = resolveSelectionIndex(sizeValues, variant.options?.[sizeIdx]);
     if (resolved !== null) {
-      return sizeValues[resolved]?.title || '';
+      const title = sizeValues[resolved]?.title || '';
+      if (title && !colorTitles.has(title.toLowerCase())) return title;
     }
   }
 
@@ -88,7 +107,19 @@ function getVariantSizeTitle(variant, product) {
     .map((part) => part.trim())
     .filter(Boolean);
 
-  return parts.length >= 2 ? parts[parts.length - 1] : '';
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const part = parts[i];
+    const normalized = part.toLowerCase();
+    if (colorTitles.has(normalized)) continue;
+    if (knownSizeTitles.size && knownSizeTitles.has(normalized)) return part;
+  }
+
+  if (parts.length >= 2) {
+    const candidate = parts[parts.length - 1];
+    if (!colorTitles.has(candidate.toLowerCase())) return candidate;
+  }
+
+  return '';
 }
 
 function getSizesFromVariantTitles(product) {
@@ -161,13 +192,13 @@ export function getOptionValues(product, type) {
 
 export function getAvailableSizes(product, color = '') {
   const allSizes = getOptionValues(product, 'size');
-  if (!color) return allSizes;
+  if (!color || allSizes.length <= 1) return allSizes;
 
   const colorIdx = getOptionIndex(product, 'color');
   if (colorIdx < 0) return allSizes;
 
   const colorValues = product.options[colorIdx]?.values || [];
-  const colorVal = colorValues.findIndex((value) => value.title === color);
+  const colorVal = findColorValueIndex(colorValues, color);
   if (colorVal < 0) return allSizes;
 
   const sizes = new Set();
@@ -179,8 +210,9 @@ export function getAvailableSizes(product, color = '') {
     if (sizeTitle) sizes.add(sizeTitle);
   }
 
-  const filtered = sortSizeTitles([...sizes]);
-  return filtered.length ? filtered : allSizes;
+  const filtered = sortSizeTitles([...sizes]).filter((title) => allSizes.includes(title));
+  if (filtered.length > 1) return filtered;
+  return allSizes;
 }
 
 function mergeSizeValues(primary, product) {
@@ -230,9 +262,7 @@ export function getFilteredVariants(product, { color = '', size = '' } = {}) {
   const colorIdx = getOptionIndex(product, 'color');
   const colorValues = colorIdx >= 0 ? product.options[colorIdx].values || [] : [];
   const colorVal =
-    colorIdx >= 0 && color
-      ? colorValues.findIndex((value) => value.title === color)
-      : -1;
+    colorIdx >= 0 && color ? findColorValueIndex(colorValues, color) : -1;
 
   return (product.variants || []).filter((variant) => {
     const variantColor = resolveSelectionIndex(colorValues, variant.options?.[colorIdx]);
@@ -244,9 +274,13 @@ export function getFilteredVariants(product, { color = '', size = '' } = {}) {
   });
 }
 
+export function hasMultipleSizes(product) {
+  return getOptionValues(product, 'size').length > 1;
+}
+
 export function findVariant(product, { color, size }) {
   const colors = getOptionValues(product, 'color');
-  const sizes = getAvailableSizes(product, color);
+  const sizes = getOptionValues(product, 'size');
 
   if (colors.length > 1 && !color) return null;
   if (sizes.length > 1 && !size) return null;
@@ -261,7 +295,7 @@ export function getImagesForColor(product, color) {
   const colorIdx = getOptionIndex(product, 'color');
   if (colorIdx < 0) return images;
 
-  const colorVal = product.options[colorIdx].values.findIndex((value) => value.title === color);
+  const colorVal = findColorValueIndex(product.options[colorIdx].values || [], color);
   if (colorVal < 0) return images;
 
   const variantIds = new Set(
