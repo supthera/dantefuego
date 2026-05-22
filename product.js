@@ -1,4 +1,5 @@
 import { initFonts, preloadCursors } from './js/site.js';
+import { addToCart, initCartBadge } from './js/cart.js';
 import {
   escapeHtml,
   findVariant,
@@ -18,6 +19,7 @@ import {
 
 initFonts();
 preloadCursors();
+initCartBadge();
 
 const params = new URLSearchParams(window.location.search);
 const productId = params.get('id');
@@ -54,6 +56,7 @@ function productShellMarkup() {
           <div class="product-option-field" id="sizeOptionField"></div>
         </div>
         <div class="product-actions">
+          <button class="pay-btn pay-cart" id="addToCartBtn" type="button" disabled>Add to Cart</button>
           <button class="pay-btn pay-stripe" id="stripeBtn" type="button" disabled>Pay with Card</button>
         </div>
       </div>
@@ -113,10 +116,18 @@ function renderProduct() {
   updatePrice();
 
   const stripeBtn = document.getElementById('stripeBtn');
+  const addToCartBtn = document.getElementById('addToCartBtn');
   stripeBtn.disabled = false;
+  addToCartBtn.disabled = false;
+
   if (!stripeBtn.dataset.bound) {
     stripeBtn.dataset.bound = '1';
     stripeBtn.addEventListener('click', handleCheckout);
+  }
+
+  if (!addToCartBtn.dataset.bound) {
+    addToCartBtn.dataset.bound = '1';
+    addToCartBtn.addEventListener('click', handleAddToCart);
   }
 }
 
@@ -291,49 +302,83 @@ function updatePrice() {
 }
 
 async function handleCheckout() {
+  const variant = getSelectedVariant();
+  if (!variant) return;
+
+  const stripeBtn = document.getElementById('stripeBtn');
+  stripeBtn.disabled = true;
+
+  try {
+    await startCheckout({
+      productId: product.id,
+      variantId: variant.id,
+      color: variant.color,
+      size: variant.size
+    });
+  } catch (error) {
+    alert(error.message || 'Unable to start checkout');
+    stripeBtn.disabled = false;
+  }
+}
+
+function handleAddToCart() {
+  const variant = getSelectedVariant();
+  if (!variant) return;
+
+  const image = activeImages[0] || pickImage(product.images || []);
+  addToCart({
+    productId: product.id,
+    variantId: variant.id,
+    color: variant.color,
+    size: variant.size,
+    title: product.title,
+    price: variant.price,
+    imageSrc: image?.src || ''
+  });
+
+  const addToCartBtn = document.getElementById('addToCartBtn');
+  const originalLabel = addToCartBtn.textContent;
+  addToCartBtn.textContent = 'Added';
+  window.setTimeout(() => {
+    addToCartBtn.textContent = originalLabel;
+  }, 1200);
+}
+
+function getSelectedVariant() {
   const { color, size } = getVariantSelections();
   const colors = getOptionValues(product, 'color');
   const needsSize = needsSizeSelection(product, color);
 
   if (colors.length > 1 && !color) {
     alert('Please select a color');
-    return;
+    return null;
   }
 
   if (needsSize && !size) {
     alert('Please select a size');
-    return;
+    return null;
   }
 
   const variant = findVariant(product, { color, size });
   if (!variant) {
     alert('That combination is not available');
-    return;
+    return null;
   }
 
-  const stripeBtn = document.getElementById('stripeBtn');
-  stripeBtn.disabled = true;
+  return { ...variant, color, size };
+}
 
-  try {
-    const res = await fetch('/api/checkout/create-session', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        productId: product.id,
-        variantId: variant.id,
-        color,
-        size
-      })
-    });
-    const payload = await res.json();
+async function startCheckout(item) {
+  const res = await fetch('/api/checkout/create-session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(item)
+  });
+  const payload = await res.json();
 
-    if (!res.ok) {
-      throw new Error(payload.error || 'Checkout failed');
-    }
-
-    window.location.href = payload.url;
-  } catch (error) {
-    alert(error.message || 'Unable to start checkout');
-    stripeBtn.disabled = false;
+  if (!res.ok) {
+    throw new Error(payload.error || 'Checkout failed');
   }
+
+  window.location.href = payload.url;
 }

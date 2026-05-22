@@ -1,4 +1,5 @@
 import { initFonts, preloadCursors } from './js/site.js';
+import { initCartBadge } from './js/cart.js';
 import { MOCK_PRODUCTS, animateProductCards, renderProductGrid } from './js/render-product-card.js';
 import { escapeHtml, preloadImage } from './js/product-utils.js';
 
@@ -6,6 +7,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 initFonts();
 preloadCursors();
+initCartBadge();
 
 const API_URL = '/api/products';
 const USE_MOCKS =

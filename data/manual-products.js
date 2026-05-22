@@ -90,7 +90,7 @@ export default {
       ],
       variants: converseSizes.map((size, index) => ({
         id: `us-${size}`,
-        price: 15000,
+        price: 13000,
         title: `Ebony Zebra / US ${size}`,
         is_enabled: true,
         is_default: size === '10',
