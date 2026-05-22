@@ -711,13 +711,22 @@ html.fonts-pending .footer-logo-text {
 }
 
 .product-options {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
   margin-bottom: 2rem;
   max-width: 24rem;
 }
 
+.product-option-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
 .product-option-label {
+  display: block;
+  margin-bottom: 0;
   font-family: var(--body-font);
   font-size: 0.75rem;
   font-weight: 400;

@@ -5,6 +5,7 @@ import {
   formatCents,
   formatPrice,
   getImagesForColor,
+  getAvailableSizes,
   getOptionValues,
   pickImage,
   preloadImage,
@@ -45,7 +46,10 @@ function productShellMarkup() {
         <h1 id="productTitle"></h1>
         <p id="productPrice" class="product-detail-price"></p>
         <div id="productDescription" class="product-description"></div>
-        <div class="product-options" id="productOptions"></div>
+        <div class="product-options">
+          <div class="product-option-field" id="colorOptionField"></div>
+          <div class="product-option-field" id="sizeOptionField"></div>
+        </div>
         <div class="product-actions">
           <button class="pay-btn pay-stripe" id="stripeBtn" type="button" disabled>Pay with Card</button>
         </div>
@@ -114,31 +118,53 @@ function renderProduct() {
 }
 
 function renderOptions() {
-  const optionsEl = document.getElementById('productOptions');
-  const colors = getOptionValues(product, 'color');
-  const sizes = getOptionValues(product, 'size');
-
-  optionsEl.innerHTML = [
-    renderOptionField('color', 'Color', colors),
-    renderOptionField('size', 'Size', sizes)
-  ]
-    .filter(Boolean)
-    .join('');
+  renderColorOption();
+  renderSizeOption();
 
   document.getElementById('colorSelect')?.addEventListener('change', (event) => {
     updateGallery(getImagesForColor(product, event.target.value));
+    renderSizeOption();
     updatePrice();
   });
-
-  document.getElementById('sizeSelect')?.addEventListener('change', updatePrice);
 }
 
-function renderOptionField(type, label, values) {
+function renderColorOption() {
+  const field = document.getElementById('colorOptionField');
+  if (!field) return;
+
+  field.innerHTML = renderOptionField(
+    'color',
+    'Color',
+    getOptionValues(product, 'color'),
+    { hideSingle: true }
+  );
+}
+
+function renderSizeOption() {
+  const field = document.getElementById('sizeOptionField');
+  if (!field) return;
+
+  const previousSize = document.getElementById('sizeSelect')?.value || '';
+  const sizes = getAvailableSizes(product, getVariantSelections().color);
+
+  field.innerHTML = renderOptionField('size', 'Size', sizes, { hideSingle: true });
+
+  const sizeSelect = document.getElementById('sizeSelect');
+  if (!sizeSelect) return;
+
+  if (previousSize && sizes.includes(previousSize)) {
+    sizeSelect.value = previousSize;
+  }
+
+  sizeSelect.addEventListener('change', updatePrice);
+}
+
+function renderOptionField(type, label, values, { hideSingle = false } = {}) {
   if (!values.length) return '';
 
   const id = `${type}Select`;
 
-  if (values.length === 1) {
+  if (hideSingle && values.length === 1) {
     return `<input type="hidden" id="${id}" value="${escapeHtml(values[0])}">`;
   }
 

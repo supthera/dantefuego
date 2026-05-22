@@ -142,7 +142,7 @@ export function getOptionValues(product, type) {
     }
 
     if (type === 'size') {
-      return getSizesFromVariantTitles(product);
+      return mergeSizeValues([], product);
     }
 
     return [];
@@ -153,10 +153,38 @@ export function getOptionValues(product, type) {
     .map((value) => value.title);
 
   if (type === 'size') {
-    return sortSizeTitles(titles);
+    return mergeSizeValues(titles, product);
   }
 
   return titles;
+}
+
+export function getAvailableSizes(product, color = '') {
+  const allSizes = getOptionValues(product, 'size');
+  if (!color) return allSizes;
+
+  const colorIdx = getOptionIndex(product, 'color');
+  if (colorIdx < 0) return allSizes;
+
+  const colorValues = product.options[colorIdx]?.values || [];
+  const colorVal = colorValues.findIndex((value) => value.title === color);
+  if (colorVal < 0) return allSizes;
+
+  const sizes = new Set();
+  for (const variant of product.variants || []) {
+    const variantColor = resolveSelectionIndex(colorValues, variant.options?.[colorIdx]);
+    if (variantColor !== colorVal) continue;
+
+    const sizeTitle = getVariantSizeTitle(variant, product);
+    if (sizeTitle) sizes.add(sizeTitle);
+  }
+
+  const filtered = sortSizeTitles([...sizes]);
+  return filtered.length ? filtered : allSizes;
+}
+
+function mergeSizeValues(primary, product) {
+  return sortSizeTitles([...new Set([...primary, ...getSizesFromVariantTitles(product)])]);
 }
 
 export function pickImage(images) {
