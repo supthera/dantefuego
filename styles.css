@@ -31,36 +31,19 @@ body {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  body { cursor: none; }
-}
+  @keyframes flame-cursor {
+    0%, 14.185714285714%, 100% { cursor: url('/assets/cursor-flame/0.png') 0 0, auto; }
+    14.285714285714%, 28.471428571429% { cursor: url('/assets/cursor-flame/1.png') 0 0, auto; }
+    28.571428571429%, 42.757142857143% { cursor: url('/assets/cursor-flame/2.png') 0 0, auto; }
+    42.857142857143%, 57.042857142857% { cursor: url('/assets/cursor-flame/3.png') 0 0, auto; }
+    57.142857142857%, 71.328571428571% { cursor: url('/assets/cursor-flame/4.png') 0 0, auto; }
+    71.428571428571%, 85.614285714286% { cursor: url('/assets/cursor-flame/5.png') 0 0, auto; }
+    85.714285714286%, 99.9% { cursor: url('/assets/cursor-flame/6.png') 0 0, auto; }
+  }
 
-.cursor {
-  width: 48px;
-  height: 48px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-}
-
-.cursor.is-ready {
-  opacity: 1;
-}
-
-.cursor img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  pointer-events: none;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-.cursor-ring {
-  display: none;
+  body {
+    animation: flame-cursor 1.1666666666667s linear infinite;
+  }
 }
 
 body::before {
@@ -294,7 +277,6 @@ html.fonts-pending .footer-logo-text {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   transition: transform 0.35s cubic-bezier(0.23,1,0.32,1), box-shadow 0.35s ease, border-color 0.35s ease;
-  cursor: none;
   opacity: 0;
   transform: translateY(40px);
 }
@@ -497,7 +479,6 @@ html.fonts-pending .footer-logo-text {
   background: var(--gray);
   color: inherit;
   text-decoration: none;
-  cursor: none;
   opacity: 0;
   transform: translateY(40px);
 }
@@ -666,7 +647,6 @@ html.fonts-pending .footer-logo-text {
   padding: 0;
   border: 1px solid rgba(255,255,255,0.08);
   background: var(--gray);
-  cursor: none;
   overflow: hidden;
   opacity: 0.65;
   transition: opacity 0.2s ease, border-color 0.2s ease;
@@ -845,7 +825,7 @@ footer {
 
 .modal-close {
   background: none; border: none; color: var(--cream);
-  font-size: 1.2rem; cursor: none; opacity: 0.5; transition: opacity 0.2s;
+  font-size: 1.2rem; opacity: 0.5; transition: opacity 0.2s;
 }
 
 .modal-close:hover { opacity: 1; }
@@ -892,7 +872,6 @@ footer {
   font-weight: 400;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  cursor: pointer;
   transition: all 0.3s ease;
 }
 
@@ -918,8 +897,7 @@ footer {
 ::-webkit-scrollbar-thumb { background: var(--red); }
 
 @media (hover: none), (pointer: coarse) {
-  body { cursor: auto; }
-  .cursor, .cursor-ring { display: none; }
+  body { cursor: auto; animation: none; }
   .product-card, .product-card-cta, .df-card, .product-gallery-thumb, .modal-close, button, a, select { cursor: pointer; }
 }
 
