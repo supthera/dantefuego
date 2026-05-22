@@ -56,8 +56,8 @@ function productShellMarkup() {
           <div class="product-option-field" id="sizeOptionField"></div>
         </div>
         <div class="product-actions">
-          <button class="pay-btn pay-cart" id="addToCartBtn" type="button" disabled>Add to Cart</button>
           <button class="pay-btn pay-stripe" id="stripeBtn" type="button" disabled>Pay with Card</button>
+          <button class="pay-btn pay-cart" id="addToCartBtn" type="button" disabled>Add to Cart</button>
         </div>
       </div>
     </div>
