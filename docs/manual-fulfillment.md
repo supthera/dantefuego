@@ -1,6 +1,19 @@
+# Fulfillment guide
+
+Every product on the site is paid through **Stripe Checkout**. After payment, the Stripe webhook routes fulfillment by each product's `fulfillment` field.
+
+| Source | Where it lives | After payment |
+|--------|----------------|---------------|
+| **Printify** | Printify catalog (`site-live` tag) | Order submitted to Printify automatically |
+| **Manual** | [`data/manual-products.json`](../data/manual-products.json) | Email sent to you to procure and ship |
+
+Printify products get `fulfillment: "printify"` automatically. Manual products get `fulfillment: "manual"` automatically.
+
+---
+
 # Manual fulfillment playbook
 
-When a customer buys a product with `fulfillment: manual` (defined in [`data/manual-products.json`](../data/manual-products.json)), Stripe collects payment and the site emails you to procure and ship the item yourself.
+Use this when you add items in [`data/manual-products.json`](../data/manual-products.json) that are **not** in Printify — limited drops, third-party gear you buy yourself, etc.
 
 ## What happens automatically
 
@@ -13,25 +26,38 @@ When a customer buys a product with `fulfillment: manual` (defined in [`data/man
    - Stripe session ID
 4. If Cloudflare D1 is configured, the order is stored in the `orders` table.
 
-Printify items are logged the same way but do **not** trigger a manual procurement email (Printify auto-fulfillment can be added later).
+Printify items skip the manual email and are submitted to Printify instead (see below).
 
-## Your steps after notification
+## Your steps after a manual order email
 
 1. Open the email and confirm payment in the [Stripe Dashboard](https://dashboard.stripe.com/payments).
-2. Procure the item (Oakley backpack, etc.).
+2. Procure the item yourself.
 3. Ship to the address in the email.
 4. Reply to the customer with tracking (optional but recommended).
+
+## Printify auto-fulfillment
+
+Products from Printify (hoodies, backpacks, etc.) are submitted to the Printify Orders API when payment succeeds.
+
+Requirements:
+
+- `PRINTIFY_TOKEN` must include the **`orders.write`** scope (regenerate at [Printify API settings](https://printify.com/app/account/api) if needed).
+- Customer shipping address comes from Stripe Checkout.
+- Printify sends shipping notifications to the customer when the order ships (`send_shipping_notification: true`).
+- The Stripe session ID is used as `external_id` to avoid duplicate Printify orders on webhook retries.
 
 ## Adding manual products
 
 Edit [`data/manual-products.json`](../data/manual-products.json):
 
-- Use IDs prefixed with `manual-` (e.g. `manual-oakley-backpack`).
+- Use IDs prefixed with `manual-` (e.g. `manual-limited-hat`).
 - Set `"published": true` to show on the site.
 - Match the same shape as Printify products: `title`, `description`, `images`, `options`, `variants[]` with `price` in **cents**.
-- Set `"source": "manual"` and `"fulfillment": "manual"` are added automatically by [`lib/manual-products.js`](../lib/manual-products.js).
+- `source` and `fulfillment` are set to `"manual"` automatically by [`lib/manual-products.js`](../lib/manual-products.js).
 
 Commit, push, and redeploy.
+
+**Do not** duplicate Printify products here — if it's in Printify with the `site-live` tag, it already appears on the site and auto-fulfills.
 
 ## Required Cloudflare secrets
 
@@ -39,7 +65,8 @@ Set these under **Workers & Pages → dantefuegodev → Settings → Variables a
 
 | Variable | Type | Purpose |
 |----------|------|---------|
-| `PRINTIFY_TOKEN` | Secret | Printify catalog |
+| `PRINTIFY_TOKEN` | Secret | Printify catalog + order submission |
+| `PRINTIFY_SHOP_ID` | Secret | Shop ID (if not using default shop) |
 | `STRIPE_SECRET_KEY` | Secret | Create Checkout sessions |
 | `STRIPE_WEBHOOK_SECRET` | Secret | Verify Stripe webhooks |
 | `SITE_URL` | Plain | e.g. `https://dantefuegodev.pages.dev` |
@@ -51,16 +78,18 @@ Optional:
 
 | Variable | Purpose |
 |----------|---------|
-| `PRINTIFY_SHOP_ID` | If you have multiple Printify shops |
 | `LIVE_PRODUCT_TAG` | Default `site-live` |
 | `HIDDEN_PRODUCT_IDS` | Comma-separated Printify IDs to hide |
 
+Resend vars are only required when you sell manual products.
+
 ## Stripe webhook setup
 
-1. Stripe Dashboard → **Developers → Webhooks → Add endpoint**
-2. URL: `https://dantefuegodev.pages.dev/api/stripe/webhook`
-3. Event: `checkout.session.completed`
-4. Copy the signing secret → `STRIPE_WEBHOOK_SECRET` in Cloudflare
+1. Stripe Dashboard → **Developers → Workbench → Webhooks** (or [dashboard.stripe.com/webhooks](https://dashboard.stripe.com/webhooks))
+2. Create destination → **Your account**
+3. URL: `https://dantefuegodev.pages.dev/api/stripe/webhook`
+4. Event: `checkout.session.completed`
+5. Copy the signing secret → `STRIPE_WEBHOOK_SECRET` in Cloudflare
 
 ## Optional: Cloudflare D1 order log
 
@@ -83,7 +112,7 @@ Apply schema:
 wrangler d1 execute dantefuego-orders --file=./migrations/001_orders.sql
 ```
 
-Without D1, orders are still emailed and logged to the function console.
+Without D1, Printify orders still submit and manual orders still email; idempotency for webhook retries is weaker without D1.
 
 ## Local development
 
