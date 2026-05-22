@@ -21,24 +21,58 @@ export function formatCents(cents) {
   return `$${(cents / 100).toFixed(2)}`;
 }
 
+export function getOptionIndex(product, type) {
+  const needle = String(type).toLowerCase();
+  return (product.options || []).findIndex(
+    (entry) => String(entry.type || '').toLowerCase() === needle
+  );
+}
+
+function resolveSelectionIndex(values, selection) {
+  if (selection === undefined || selection === null) return null;
+
+  if (Number.isInteger(selection) && values[selection]) {
+    return selection;
+  }
+
+  const byId = values.findIndex((value) => value.id === selection);
+  if (byId >= 0) return byId;
+
+  const numeric = Number(selection);
+  if (Number.isInteger(numeric) && values[numeric]) {
+    return numeric;
+  }
+
+  return null;
+}
+
 export function getOptionValues(product, type) {
   const optionIdx = getOptionIndex(product, type);
   if (optionIdx < 0) return [];
 
-  const availableIndexes = new Set(
-    (product.variants || [])
-      .map((variant) => variant.options?.[optionIdx])
-      .filter((value) => value !== undefined && value !== null)
-  );
+  const values = product.options[optionIdx]?.values || [];
+  const availableIndexes = new Set();
+  let hasOptionMetadata = false;
 
-  const option = product.options[optionIdx];
-  return (option?.values || [])
+  for (const variant of product.variants || []) {
+    const selection = variant.options?.[optionIdx];
+    if (selection === undefined || selection === null) continue;
+
+    hasOptionMetadata = true;
+    const resolved = resolveSelectionIndex(values, selection);
+    if (resolved !== null) availableIndexes.add(resolved);
+  }
+
+  if (!availableIndexes.size) {
+    if (!hasOptionMetadata && values.length) {
+      return values.map((value) => value.title);
+    }
+    return [];
+  }
+
+  return values
     .filter((_, index) => availableIndexes.has(index))
     .map((value) => value.title);
-}
-
-export function getOptionIndex(product, type) {
-  return (product.options || []).findIndex((entry) => entry.type === type);
 }
 
 export function pickImage(images) {
@@ -83,18 +117,22 @@ export function stripHtml(html) {
 export function findVariant(product, { color, size }) {
   const colorIdx = getOptionIndex(product, 'color');
   const sizeIdx = getOptionIndex(product, 'size');
+  const colorValues = colorIdx >= 0 ? product.options[colorIdx].values || [] : [];
+  const sizeValues = sizeIdx >= 0 ? product.options[sizeIdx].values || [] : [];
   const colorVal =
     colorIdx >= 0 && color
-      ? product.options[colorIdx].values.findIndex((value) => value.title === color)
+      ? colorValues.findIndex((value) => value.title === color)
       : -1;
   const sizeVal =
     sizeIdx >= 0 && size
-      ? product.options[sizeIdx].values.findIndex((value) => value.title === size)
+      ? sizeValues.findIndex((value) => value.title === size)
       : -1;
 
   return (product.variants || []).find((variant) => {
-    const matchesColor = colorIdx < 0 || colorVal < 0 || variant.options[colorIdx] === colorVal;
-    const matchesSize = sizeIdx < 0 || sizeVal < 0 || variant.options[sizeIdx] === sizeVal;
+    const variantColor = resolveSelectionIndex(colorValues, variant.options?.[colorIdx]);
+    const variantSize = resolveSelectionIndex(sizeValues, variant.options?.[sizeIdx]);
+    const matchesColor = colorIdx < 0 || colorVal < 0 || variantColor === colorVal;
+    const matchesSize = sizeIdx < 0 || sizeVal < 0 || variantSize === sizeVal;
     return matchesColor && matchesSize;
   });
 }
@@ -111,7 +149,13 @@ export function getImagesForColor(product, color) {
 
   const variantIds = new Set(
     (product.variants || [])
-      .filter((variant) => variant.options[colorIdx] === colorVal)
+      .filter((variant) => {
+        const variantColor = resolveSelectionIndex(
+          product.options[colorIdx].values || [],
+          variant.options?.[colorIdx]
+        );
+        return variantColor === colorVal;
+      })
       .map((variant) => variant.id)
   );
 

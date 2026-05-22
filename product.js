@@ -139,13 +139,7 @@ function renderOptionField(type, label, values) {
   const id = `${type}Select`;
 
   if (values.length === 1) {
-    return `
-      <input type="hidden" id="${id}" value="${escapeHtml(values[0])}">
-      <p class="product-option-static">
-        <span class="product-option-label">${label}</span>
-        ${escapeHtml(values[0])}
-      </p>
-    `;
+    return `<input type="hidden" id="${id}" value="${escapeHtml(values[0])}">`;
   }
 
   return `
