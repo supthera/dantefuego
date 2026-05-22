@@ -44,6 +44,23 @@ body {
   body {
     animation: flame-cursor 1.1666666666667s linear infinite;
   }
+
+  @keyframes banana-cursor {
+    0%, 12.4%, 100% { cursor: url('/assets/cursor-banana/0.png') 0 0, auto; }
+    12.5%, 24.9% { cursor: url('/assets/cursor-banana/1.png') 0 0, auto; }
+    25%, 37.4% { cursor: url('/assets/cursor-banana/2.png') 0 0, auto; }
+    37.5%, 49.9% { cursor: url('/assets/cursor-banana/3.png') 0 0, auto; }
+    50%, 62.4% { cursor: url('/assets/cursor-banana/4.png') 0 0, auto; }
+    62.5%, 74.9% { cursor: url('/assets/cursor-banana/5.png') 0 0, auto; }
+    75%, 87.4% { cursor: url('/assets/cursor-banana/6.png') 0 0, auto; }
+    87.5%, 99.9% { cursor: url('/assets/cursor-banana/7.png') 0 0, auto; }
+  }
+
+  .page-product #colorOptionField,
+  .page-product #sizeOptionField,
+  .page-product .product-actions .pay-btn:not(:disabled) {
+    animation: banana-cursor 0.66666666666667s linear infinite;
+  }
 }
 
 body::before {
