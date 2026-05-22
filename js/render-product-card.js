@@ -1,14 +1,4 @@
-import { escapeHtml, formatPrice, getOptionValues, pickImage, productUrl } from './product-utils.js';
-
-const SWATCH_MAP = {
-  black: '#1a1a1a',
-  white: '#f0f0f0',
-  'dark red': '#8b0000',
-  charcoal: '#2c2c2c',
-  red: '#8b0000',
-  grey: '#6b6b6b',
-  gray: '#6b6b6b'
-};
+import { escapeHtml, formatPrice, pickImage, productUrl } from './product-utils.js';
 
 export const MOCK_PRODUCTS = [
   {
@@ -48,34 +38,9 @@ export const MOCK_PRODUCTS = [
   }
 ];
 
-function swatchColor(name) {
-  return SWATCH_MAP[String(name).toLowerCase()] || '#555555';
-}
-
-function renderSwatches(colors) {
-  if (!colors.length) return '';
-
-  return `<div class="df-colors">${colors
-    .map(
-      (color) =>
-        `<span class="df-swatch" style="background:${swatchColor(color)};" title="${escapeHtml(color)}"></span>`
-    )
-    .join('')}</div>`;
-}
-
-function renderSizes(sizes) {
-  if (!sizes.length) return '';
-
-  return `<div class="df-sizes">${sizes
-    .map((size, index) => `<span class="df-size-tag${index === 0 ? ' active' : ''}">${escapeHtml(size)}</span>`)
-    .join('')}</div>`;
-}
-
 export function renderProductCard(product) {
   const img = pickImage(product.images);
   const price = formatPrice(product.variants || []);
-  const colors = getOptionValues(product, 'color');
-  const sizes = getOptionValues(product, 'size');
   const badge = product.badge
     ? `<div class="df-badge">${escapeHtml(product.badge)}</div>`
     : '';
@@ -99,9 +64,7 @@ export function renderProductCard(product) {
       <div class="df-divider"></div>
       <div class="df-meta">
         <span class="df-price">${escapeHtml(price)}</span>
-        ${renderSwatches(colors)}
       </div>
-      ${renderSizes(sizes)}
     </div>
   </a>`;
 }
