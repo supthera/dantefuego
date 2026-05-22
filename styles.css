@@ -175,7 +175,6 @@ html.fonts-pending .footer-logo-text {
 }
 
 .hero-logo-pin {
-  --hero-progress: 0;
   position: fixed;
   inset: 0;
   display: flex;
@@ -184,9 +183,6 @@ html.fonts-pending .footer-logo-text {
   z-index: 10;
   pointer-events: none;
   transform-origin: center center;
-  opacity: calc(1 - var(--hero-progress));
-  transform: scale(calc(1 - var(--hero-progress) * 0.75));
-  filter: blur(calc(var(--hero-progress) * 24px));
   will-change: transform, opacity, filter;
 }
 
