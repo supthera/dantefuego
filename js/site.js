@@ -9,39 +9,36 @@ export function initFonts() {
 
 export function initCursor() {
   const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-  if (!cursor || !ring) return;
+  if (!cursor) return;
 
-  let mouseX = 0;
-  let mouseY = 0;
-  let ringX = 0;
-  let ringY = 0;
+  const prefersFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (!prefersFinePointer) return;
 
-  document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    cursor.style.transform = `translate(${mouseX - 4}px, ${mouseY - 4}px)`;
-  });
+  const img = cursor.querySelector('img');
+  const hotspotX = 0;
+  const hotspotY = 3;
+  const scale = 48 / 32;
 
-  function tickRing() {
-    ringX += (mouseX - ringX - 16) * 0.12;
-    ringY += (mouseY - ringY - 16) * 0.12;
-    ring.style.transform = `translate(${ringX}px, ${ringY}px)`;
-    requestAnimationFrame(tickRing);
+  function moveCursor(clientX, clientY) {
+    cursor.style.transform = `translate(${clientX - hotspotX * scale}px, ${clientY - hotspotY * scale}px)`;
   }
 
-  tickRing();
+  function showCursor() {
+    cursor.classList.add('is-ready');
+  }
 
-  document.querySelectorAll('button, a, select').forEach((el) => {
-    el.addEventListener('mouseenter', () => {
-      ring.style.width = '48px';
-      ring.style.height = '48px';
-      ring.style.borderColor = 'rgba(204,0,0,0.8)';
-    });
-    el.addEventListener('mouseleave', () => {
-      ring.style.width = '32px';
-      ring.style.height = '32px';
-      ring.style.borderColor = 'rgba(204,0,0,0.4)';
-    });
-  });
+  if (img?.complete && img.naturalWidth > 0) {
+    showCursor();
+  } else if (img) {
+    img.addEventListener('load', showCursor, { once: true });
+    img.addEventListener('error', () => {
+      cursor.style.display = 'none';
+      document.body.style.cursor = 'auto';
+    }, { once: true });
+  } else {
+    showCursor();
+  }
+
+  document.addEventListener('mousemove', (e) => moveCursor(e.clientX, e.clientY), { passive: true });
+  document.addEventListener('mouseenter', (e) => moveCursor(e.clientX, e.clientY));
 }

@@ -23,6 +23,8 @@ const MIME = {
   '.json': 'application/json; charset=utf-8',
   '.woff2': 'font/woff2',
   '.ttf': 'font/ttf',
+  '.gif': 'image/gif',
+  '.png': 'image/png',
   '.txt': 'text/plain; charset=utf-8'
 };
 

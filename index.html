@@ -16,7 +16,9 @@
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
+<div class="cursor" id="cursor" aria-hidden="true">
+  <img src="/assets/cursor-flame.gif" alt="" width="48" height="48" draggable="false">
+</div>
 <div class="cursor-ring" id="cursorRing"></div>
 
 <header class="site-header" id="siteHeader">
@@ -50,21 +52,12 @@
   <div class="products-grid" id="productsGrid">
     <div class="loading">Loading Collection...</div>
   </div>
-  <div class="collection-header">
-    <p class="collection-eyebrow">The First Circle</p>
-  </div>
 </section>
 
 <footer>
   <p class="footer-logo-text">
     <span class="logo-dante">Dante Fu</span><span class="logo-fuego">ego</span>
   </p>
-  <div class="footer-links">
-    <a href="#products">Collection</a>
-    <a href="#">About</a>
-    <a href="#">Shipping</a>
-    <a href="#">Contact</a>
-  </div>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>

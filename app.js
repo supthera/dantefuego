@@ -45,15 +45,6 @@ gsap.to('#siteHeader', {
   }
 });
 
-gsap.from('.collection-eyebrow', {
-  opacity: 0,
-  y: 30,
-  stagger: 0.15,
-  duration: 1,
-  ease: 'power2.out',
-  scrollTrigger: { trigger: '.collection-header', start: 'top 80%' }
-});
-
 async function loadProducts() {
   const grid = document.getElementById('productsGrid');
 
