@@ -48,16 +48,76 @@ Requirements:
 
 ## Adding manual products
 
-Edit [`data/manual-products.js`](../data/manual-products.js):
+### Step-by-step
 
-- Use IDs prefixed with `manual-` (e.g. `manual-limited-hat`).
-- Set `"published": true` to show on the site.
-- Match the same shape as Printify products: `title`, `description`, `images`, `options`, `variants[]` with `price` in **cents**.
-- `source` and `fulfillment` are set to `"manual"` automatically by [`lib/manual-products.js`](../lib/manual-products.js).
+1. **Copy the template** from the top of [`data/manual-products.js`](../data/manual-products.js).
+2. **Set a unique id** prefixed with `manual-` (e.g. `manual-limited-hat`).
+3. **Add product images** to [`assets/`](../assets/) (see image specs below) or use a full HTTPS URL.
+4. **Set price in cents** on each variant (`4500` = $45.00).
+5. **Set `"published": true`** when ready to show on the site (`false` keeps it as a draft).
+6. **Commit, push, redeploy** — product appears in the collection grid and at `/product.html?id=manual-your-slug`.
 
-Commit, push, and redeploy.
+### Product fields
+
+| Field | Required | Notes |
+|-------|----------|-------|
+| `id` | Yes | Must start with `manual-` |
+| `published` | Yes | `true` = visible on site |
+| `title` | Yes | Shown on grid and product page |
+| `description` | No | Plain text on product page |
+| `images` | No | `{ src, is_default, position }`; empty shows placeholder |
+| `options` | No | `color` / `size` for selectors (same as Printify) |
+| `variants` | Yes | At least one enabled variant with `price` in **cents** |
+
+`source` and `fulfillment` are set to `"manual"` automatically by [`lib/manual-products.js`](../lib/manual-products.js).
+
+### Image specs (matches site layout)
+
+- **Aspect ratio:** 3:4 portrait
+- **Recommended size:** 1200 × 1600 px (minimum 900 × 1200)
+- **Format:** JPG or WebP
+- **Path:** `/assets/your-file.jpg` after adding the file to [`assets/`](../assets/)
+- Images use `object-fit: cover` — non-3:4 images will be cropped
+
+### Draft products
+
+The repo includes `manual-draft-example` with `"published": false` for testing. Drafts are loaded internally but **do not** appear in `/api/products` or the collection grid. Set `published: true` to go live.
 
 **Do not** duplicate Printify products here — if it's in Printify with the `site-live` tag, it already appears on the site and auto-fulfills.
+
+### Verify manual notifications (Resend)
+
+Manual sales email you at `NOTIFY_EMAIL`. Check readiness:
+
+```bash
+curl -s https://dantefuegodev.pages.dev/api/health | python3 -m json.tool
+```
+
+Look for:
+
+- `manual_notifications_ready: true`
+- `resend_api_key: true`
+- `notify_email: true`
+
+If `manual_notifications_ready` is false, add in Cloudflare → **dantefuegodev → Settings → Variables and Secrets**:
+
+- `RESEND_API_KEY` (secret)
+- `NOTIFY_EMAIL` (your inbox)
+- `RESEND_FROM_EMAIL` (sender verified in [Resend](https://resend.com))
+
+Checkout still works without Resend; you just won't get procurement emails for manual items.
+
+### Test a manual product (dev)
+
+1. Set `published: true` on a test entry (or duplicate the draft).
+2. `npm run dev` and open `/product.html?id=manual-your-id`.
+3. Complete Stripe test checkout (`4242…` card with **test** keys).
+4. Confirm webhook delivery in Stripe → Workbench → Webhooks.
+5. Confirm email at `NOTIFY_EMAIL` (requires Resend secrets locally in `.env`).
+
+### Phase 2 (later): admin without redeploy
+
+See [`docs/phase2-manual-admin.md`](phase2-manual-admin.md) for D1 + protected admin API when you outgrow file-based edits.
 
 ## Required Cloudflare secrets
 

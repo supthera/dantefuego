@@ -14,3 +14,6 @@ pages_build_output_dir = "."
 # binding = "DB"
 # database_name = "dantefuego-orders"
 # database_id = "<your-database-id>"
+#
+# Phase 2 manual product admin (see docs/phase2-manual-admin.md):
+# wrangler d1 execute dantefuego-orders --file=./migrations/002_manual_products.sql
