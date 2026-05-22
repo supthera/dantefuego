@@ -46,11 +46,11 @@ const converseImages = [
 ];
 
 const converse2Images = [
-  { src: '/assets/df-x-converse-2/1.png', is_default: true, position: 'front' },
+  { src: '/assets/df-x-converse-2/5.png', is_default: true, position: 'front' },
+  { src: '/assets/df-x-converse-2/1.png', position: 'alternate' },
   { src: '/assets/df-x-converse-2/2.png', position: 'side' },
   { src: '/assets/df-x-converse-2/3.png', position: 'profile' },
-  { src: '/assets/df-x-converse-2/4.png', position: 'detail' },
-  { src: '/assets/df-x-converse-2/5.png', position: 'alternate' }
+  { src: '/assets/df-x-converse-2/4.png', position: 'detail' }
 ];
 
 const converseSizes = ['8', '9', '10', '11', '12'];
@@ -80,18 +80,18 @@ export default {
     {
       id: 'manual-df-x-converse-2',
       published: true,
-      title: 'DF x Converse II',
+      title: 'DF x Converse EZ-369 (Ebony Zebra)',
       description:
-        'Custom Converse Chuck Taylor high-tops in black canvas with tiger-stripe panels, silver eyelets, red DANTE FUEGO heel branding, and a black platform lug sole. Ships after manual procurement.',
+        'Custom Converse Chuck Taylor high-tops in ebony zebra canvas, silver eyelets, red DANTE FUEGO heel branding, and a black platform lug sole. Ships after manual procurement.',
       images: converse2Images,
       options: [
-        { type: 'color', values: [{ title: 'Black Tiger' }] },
+        { type: 'color', values: [{ title: 'Ebony Zebra' }] },
         { type: 'size', values: converseSizes.map((title) => ({ title: `US ${title}` })) }
       ],
       variants: converseSizes.map((size, index) => ({
         id: `us-${size}`,
         price: 15000,
-        title: `Black Tiger / US ${size}`,
+        title: `Ebony Zebra / US ${size}`,
         is_enabled: true,
         is_default: size === '10',
         options: [0, index]
