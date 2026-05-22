@@ -1,10 +1,11 @@
-import { initFonts } from './js/site.js';
+import { initFonts, preloadCursors } from './js/site.js';
 import { MOCK_PRODUCTS, animateProductCards, renderProductGrid } from './js/render-product-card.js';
 import { escapeHtml, preloadImage } from './js/product-utils.js';
 
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ ignoreMobileResize: true });
 
-initFonts();
+preloadCursors();
 
 const API_URL = '/api/products';
 const USE_MOCKS =
@@ -20,29 +21,75 @@ for (let i = 0; i < 30; i++) {
   embersContainer.appendChild(ember);
 }
 
-gsap.to('#heroLogoPin', {
-  scale: 0.25,
-  filter: 'blur(24px)',
-  opacity: 0,
-  ease: 'none',
-  scrollTrigger: {
-    trigger: '#hero',
-    start: 'top top',
-    end: 'bottom top',
-    scrub: 1.5
-  }
+let heroScrollReady = false;
+
+function initHeroScroll() {
+  if (heroScrollReady) return;
+  heroScrollReady = true;
+
+  gsap.to('#heroLogoPin', {
+    scale: 0.25,
+    filter: 'blur(24px)',
+    opacity: 0,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '#hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 1.5,
+      invalidateOnRefresh: true
+    }
+  });
+
+  gsap.to('#siteHeader', {
+    opacity: 1,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '#hero',
+      start: '25% top',
+      end: 'bottom top',
+      scrub: true,
+      invalidateOnRefresh: true
+    }
+  });
+}
+
+function syncHeroScroll() {
+  if (!heroScrollReady) return;
+  ScrollTrigger.refresh();
+  ScrollTrigger.update();
+}
+
+function scrollToHashTarget() {
+  const hash = location.hash;
+  if (!hash) return false;
+
+  const target = document.querySelector(hash);
+  if (!target) return false;
+
+  target.scrollIntoView({ block: 'start' });
+  return true;
+}
+
+async function bootHeroScroll() {
+  await initFonts();
+  await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+  initHeroScroll();
+  scrollToHashTarget();
+  syncHeroScroll();
+}
+
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(syncHeroScroll, 150);
 });
 
-gsap.to('#siteHeader', {
-  opacity: 1,
-  ease: 'none',
-  scrollTrigger: {
-    trigger: '#hero',
-    start: '25% top',
-    end: 'bottom top',
-    scrub: true
-  }
-});
+window.addEventListener('load', syncHeroScroll);
+window.addEventListener('pageshow', syncHeroScroll);
+
+bootHeroScroll();
 
 async function loadProducts() {
   const grid = document.getElementById('productsGrid');
@@ -82,6 +129,7 @@ function renderProducts(products) {
   grid.innerHTML = renderProductGrid(products);
   initProductPrefetch();
   animateProductCards();
+  syncHeroScroll();
 }
 
 const prefetchedProducts = new Set();

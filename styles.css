@@ -31,25 +31,34 @@ body {
 }
 
 @media (hover: hover) and (pointer: fine) {
+  html,
+  body {
+    cursor: none;
+  }
+
+  body * {
+    cursor: inherit;
+  }
+
   @keyframes flame-cursor {
-    0%, 14.185714285714%, 100% { cursor: url('/assets/cursor-flame/0.png') 0 0, auto; }
-    14.285714285714%, 28.471428571429% { cursor: url('/assets/cursor-flame/1.png') 0 0, auto; }
-    28.571428571429%, 42.757142857143% { cursor: url('/assets/cursor-flame/2.png') 0 0, auto; }
-    42.857142857143%, 57.042857142857% { cursor: url('/assets/cursor-flame/3.png') 0 0, auto; }
-    57.142857142857%, 71.328571428571% { cursor: url('/assets/cursor-flame/4.png') 0 0, auto; }
-    71.428571428571%, 85.614285714286% { cursor: url('/assets/cursor-flame/5.png') 0 0, auto; }
-    85.714285714286%, 99.9% { cursor: url('/assets/cursor-flame/6.png') 0 0, auto; }
+    0%, 14.185714285714%, 100% { cursor: url('/assets/cursor-flame/0.png') 0 0, none; }
+    14.285714285714%, 28.471428571429% { cursor: url('/assets/cursor-flame/1.png') 0 0, none; }
+    28.571428571429%, 42.757142857143% { cursor: url('/assets/cursor-flame/2.png') 0 0, none; }
+    42.857142857143%, 57.042857142857% { cursor: url('/assets/cursor-flame/3.png') 0 0, none; }
+    57.142857142857%, 71.328571428571% { cursor: url('/assets/cursor-flame/4.png') 0 0, none; }
+    71.428571428571%, 85.614285714286% { cursor: url('/assets/cursor-flame/5.png') 0 0, none; }
+    85.714285714286%, 99.9% { cursor: url('/assets/cursor-flame/6.png') 0 0, none; }
   }
 
   @keyframes gun-cursor {
-    0%, 54.445454545455%, 100% { cursor: url('/assets/cursor-gun/0.png') 1 6, auto; }
-    54.545454545455%, 58.990909090909% { cursor: url('/assets/cursor-gun/1.png') 1 6, auto; }
-    59.090909090909%, 63.536363636364% { cursor: url('/assets/cursor-gun/2.png') 1 6, auto; }
-    63.636363636364%, 68.081818181818% { cursor: url('/assets/cursor-gun/3.png') 1 6, auto; }
-    68.181818181818%, 86.263636363636% { cursor: url('/assets/cursor-gun/4.png') 1 6, auto; }
-    86.363636363636%, 90.809090909091% { cursor: url('/assets/cursor-gun/5.png') 1 6, auto; }
-    90.909090909091%, 95.354545454545% { cursor: url('/assets/cursor-gun/6.png') 1 6, auto; }
-    95.454545454545%, 99.9% { cursor: url('/assets/cursor-gun/7.png') 1 6, auto; }
+    0%, 54.445454545455%, 100% { cursor: url('/assets/cursor-gun/0.png') 1 6, none; }
+    54.545454545455%, 58.990909090909% { cursor: url('/assets/cursor-gun/1.png') 1 6, none; }
+    59.090909090909%, 63.536363636364% { cursor: url('/assets/cursor-gun/2.png') 1 6, none; }
+    63.636363636364%, 68.081818181818% { cursor: url('/assets/cursor-gun/3.png') 1 6, none; }
+    68.181818181818%, 86.263636363636% { cursor: url('/assets/cursor-gun/4.png') 1 6, none; }
+    86.363636363636%, 90.809090909091% { cursor: url('/assets/cursor-gun/5.png') 1 6, none; }
+    90.909090909091%, 95.354545454545% { cursor: url('/assets/cursor-gun/6.png') 1 6, none; }
+    95.454545454545%, 99.9% { cursor: url('/assets/cursor-gun/7.png') 1 6, none; }
   }
 
   body:not(.page-product) {
@@ -61,18 +70,20 @@ body {
   }
 
   @keyframes banana-cursor {
-    0%, 12.4%, 100% { cursor: url('/assets/cursor-banana/0.png') 0 0, auto; }
-    12.5%, 24.9% { cursor: url('/assets/cursor-banana/1.png') 0 0, auto; }
-    25%, 37.4% { cursor: url('/assets/cursor-banana/2.png') 0 0, auto; }
-    37.5%, 49.9% { cursor: url('/assets/cursor-banana/3.png') 0 0, auto; }
-    50%, 62.4% { cursor: url('/assets/cursor-banana/4.png') 0 0, auto; }
-    62.5%, 74.9% { cursor: url('/assets/cursor-banana/5.png') 0 0, auto; }
-    75%, 87.4% { cursor: url('/assets/cursor-banana/6.png') 0 0, auto; }
-    87.5%, 99.9% { cursor: url('/assets/cursor-banana/7.png') 0 0, auto; }
+    0%, 12.4%, 100% { cursor: url('/assets/cursor-banana/0.png') 0 0, none; }
+    12.5%, 24.9% { cursor: url('/assets/cursor-banana/1.png') 0 0, none; }
+    25%, 37.4% { cursor: url('/assets/cursor-banana/2.png') 0 0, none; }
+    37.5%, 49.9% { cursor: url('/assets/cursor-banana/3.png') 0 0, none; }
+    50%, 62.4% { cursor: url('/assets/cursor-banana/4.png') 0 0, none; }
+    62.5%, 74.9% { cursor: url('/assets/cursor-banana/5.png') 0 0, none; }
+    75%, 87.4% { cursor: url('/assets/cursor-banana/6.png') 0 0, none; }
+    87.5%, 99.9% { cursor: url('/assets/cursor-banana/7.png') 0 0, none; }
   }
 
   .page-product #colorOptionField,
   .page-product #sizeOptionField,
+  .page-product #colorSelect,
+  .page-product #sizeSelect,
   .page-product .product-actions .pay-btn:not(:disabled) {
     animation: banana-cursor 0.66666666666667s linear infinite;
   }
@@ -157,6 +168,8 @@ html.fonts-pending .footer-logo-text {
 
 #hero {
   height: 100vh;
+  height: 100dvh;
+  min-height: -webkit-fill-available;
   position: relative;
   overflow: hidden;
 }
@@ -169,6 +182,8 @@ html.fonts-pending .footer-logo-text {
   justify-content: center;
   z-index: 10;
   pointer-events: none;
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
 }
 
 .hero-logo-stack {

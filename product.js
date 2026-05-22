@@ -1,4 +1,4 @@
-import { initFonts } from './js/site.js';
+import { initFonts, preloadCursors } from './js/site.js';
 import {
   escapeHtml,
   findVariant,
@@ -16,6 +16,7 @@ import {
 } from './js/product-utils.js';
 
 initFonts();
+preloadCursors();
 
 const params = new URLSearchParams(window.location.search);
 const productId = params.get('id');
