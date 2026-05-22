@@ -312,6 +312,7 @@ async function handleCheckout() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         productId: product.id,
+        variantId: variant.id,
         color,
         size
       })
