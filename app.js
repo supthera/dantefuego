@@ -3,9 +3,10 @@ import { MOCK_PRODUCTS, animateProductCards, renderProductGrid } from './js/rend
 import { escapeHtml, preloadImage } from './js/product-utils.js';
 
 gsap.registerPlugin(ScrollTrigger);
-ScrollTrigger.config({ ignoreMobileResize: true });
 
 preloadCursors();
+
+const heroLogoPin = document.getElementById('heroLogoPin');
 
 const API_URL = '/api/products';
 const USE_MOCKS =
@@ -22,23 +23,41 @@ for (let i = 0; i < 30; i++) {
 }
 
 let heroScrollReady = false;
+let heroScrollTrigger = null;
+
+function setHeroProgress(progress) {
+  if (!heroLogoPin) return;
+  const clamped = Math.min(1, Math.max(0, progress));
+  heroLogoPin.style.setProperty('--hero-progress', clamped.toFixed(4));
+}
+
+function readHeroProgress() {
+  if (heroScrollTrigger) return heroScrollTrigger.progress;
+  const hero = document.getElementById('hero');
+  if (!hero) return 0;
+
+  const scrollRange = Math.max(hero.offsetHeight, 1);
+  return Math.min(1, Math.max(0, window.scrollY / scrollRange));
+}
+
+function applyHeroProgress(progress = readHeroProgress()) {
+  setHeroProgress(progress);
+}
 
 function initHeroScroll() {
   if (heroScrollReady) return;
   heroScrollReady = true;
 
-  gsap.to('#heroLogoPin', {
-    scale: 0.25,
-    filter: 'blur(24px)',
-    opacity: 0,
-    ease: 'none',
-    scrollTrigger: {
-      trigger: '#hero',
-      start: 'top top',
-      end: 'bottom top',
-      scrub: 1.5,
-      invalidateOnRefresh: true
-    }
+  gsap.set('#heroLogoPin', { clearProps: 'transform,opacity,filter' });
+  setHeroProgress(0);
+
+  heroScrollTrigger = ScrollTrigger.create({
+    trigger: '#hero',
+    start: 'top top',
+    end: 'bottom top',
+    invalidateOnRefresh: true,
+    onUpdate: (self) => setHeroProgress(self.progress),
+    onRefresh: (self) => setHeroProgress(self.progress)
   });
 
   gsap.to('#siteHeader', {
@@ -58,6 +77,7 @@ function syncHeroScroll() {
   if (!heroScrollReady) return;
   ScrollTrigger.refresh();
   ScrollTrigger.update();
+  applyHeroProgress();
 }
 
 function scrollToHashTarget() {
@@ -88,6 +108,20 @@ window.addEventListener('resize', () => {
 
 window.addEventListener('load', syncHeroScroll);
 window.addEventListener('pageshow', syncHeroScroll);
+
+window.addEventListener(
+  'scroll',
+  () => {
+    if (window.scrollY > 2) return;
+    applyHeroProgress(0);
+  },
+  { passive: true }
+);
+
+window.visualViewport?.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(syncHeroScroll, 150);
+});
 
 bootHeroScroll();
 
