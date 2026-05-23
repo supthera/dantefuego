@@ -10,7 +10,7 @@ export function formatProductTitleMarkup(title) {
   const value = String(title || '').trim();
   const match = value.match(/^(.+?)\s(\([^)]+\))$/);
 
-  if (!match) {
+  if (!match || match[1].endsWith(':')) {
     return escapeHtml(value);
   }
 

@@ -116,7 +116,7 @@ export default {
     {
       id: 'manual-df-x-converse-2',
       published: true,
-      title: 'DF x Converse EZ-369 (Ebony Zebra)',
+      title: 'EZ-369 (Ebony Zebra)',
       description:
         'Custom Converse Chuck Taylor high-tops in ebony zebra canvas, silver eyelets, red DANTE FUEGO heel branding, and a black platform lug sole. Ships after manual procurement.',
       sizeGuide: 'This style runs large. Order a half size down.',
