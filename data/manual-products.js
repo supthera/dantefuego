@@ -111,7 +111,7 @@ export default {
         { type: 'color', values: [{ title: 'Blood Leopard' }] },
         { type: 'size', values: converseSizes.map((title) => ({ title })) }
       ],
-      variants: buildConverseVariants('Blood Leopard', 15000)
+      variants: buildConverseVariants('Blood Leopard', 20000)
     },
     {
       id: 'manual-df-x-converse-2',
@@ -125,7 +125,7 @@ export default {
         { type: 'color', values: [{ title: 'Ebony Zebra' }] },
         { type: 'size', values: converseSizes.map((title) => ({ title })) }
       ],
-      variants: buildConverseVariants('Ebony Zebra', 13000)
+      variants: buildConverseVariants('Ebony Zebra', 15000)
     }
   ]
 };
