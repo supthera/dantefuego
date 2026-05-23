@@ -338,8 +338,7 @@ html.fonts-pending .footer-logo-text {
   overflow: hidden;
   position: relative;
   display: block;
-  color: inherit;
-  text-decoration: none;
+  cursor: default;
   background: linear-gradient(145deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%);
   border: 1px solid rgba(255,255,255,0.08);
   box-shadow: 0 8px 32px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
@@ -356,7 +355,7 @@ html.fonts-pending .footer-logo-text {
   border-color: rgba(180,30,30,0.5);
 }
 
-.df-card:hover .df-overlay { opacity: 1; }
+.df-card:hover .df-overlay { visibility: visible; }
 .df-card:hover .df-img-placeholder,
 .df-card:hover .df-img { transform: scale(1.06); }
 .df-card:hover .df-ember-1 { opacity: 1; animation: dfFloatEmber 2.5s ease-in-out infinite; }
@@ -404,8 +403,7 @@ html.fonts-pending .footer-logo-text {
 .df-overlay {
   position: absolute;
   inset: 0;
-  opacity: 0;
-  transition: opacity 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+  visibility: hidden;
   display: flex;
   align-items: flex-end;
   padding: 20px;
@@ -417,7 +415,13 @@ html.fonts-pending .footer-logo-text {
   position: absolute;
   inset: 0;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.28) 50%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.35s cubic-bezier(0.23, 1, 0.32, 1);
   pointer-events: none;
+}
+
+.df-card:hover .df-overlay::before {
+  opacity: 1;
 }
 
 .df-overlay-btn {
@@ -426,8 +430,8 @@ html.fonts-pending .footer-logo-text {
   display: block;
   width: 100%;
   padding: 11px 14px;
-  background: rgba(2, 44, 27, 0.38);
-  border: 1px solid rgba(2, 44, 27, 0.62);
+  background: rgba(2, 44, 27, 0.72);
+  border: 1px solid #022C1B;
   color: rgba(240, 230, 211, 0.94);
   font-family: var(--body-font);
   font-size: 0.65rem;
@@ -435,13 +439,23 @@ html.fonts-pending .footer-logo-text {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   text-align: center;
+  text-decoration: none;
   border-radius: 8px;
-  backdrop-filter: blur(8px) saturate(1.1);
-  -webkit-backdrop-filter: blur(8px) saturate(1.1);
+  cursor: pointer;
+  pointer-events: auto;
   box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.df-overlay-btn:hover {
+  background: rgba(2, 44, 27, 0.82);
+  border-color: #022C1B;
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
 .df-ember {
@@ -1249,7 +1263,7 @@ footer {
 
 @media (hover: none), (pointer: coarse) {
   body { cursor: auto; animation: none; }
-  .product-card, .product-card-cta, .df-card, .product-gallery-thumb, .modal-close, button, a, select { cursor: pointer; }
+  .product-card, .product-card-cta, .df-overlay-btn, .product-gallery-thumb, .modal-close, button, a, select { cursor: pointer; }
 }
 
 @media (max-width: 640px) {
