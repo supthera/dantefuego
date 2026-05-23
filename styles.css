@@ -820,7 +820,7 @@ html.fonts-pending .footer-logo-text {
   display: flex;
   align-items: flex-start;
   gap: 0.45rem;
-  margin: -1rem 0 1.15rem;
+  margin: 0 0 0.35rem;
   max-width: 24rem;
   font-size: 0.72rem;
   line-height: 1.5;
@@ -830,9 +830,9 @@ html.fonts-pending .footer-logo-text {
 
 .product-size-guide-icon {
   flex-shrink: 0;
-  width: 0.85rem;
-  height: 0.85rem;
-  margin-top: 0.12em;
+  width: 0.9rem;
+  height: 0.9rem;
+  margin-top: 0.1em;
   color: rgba(240,230,211,0.42);
 }
 

@@ -51,7 +51,6 @@ function productShellMarkup() {
         <h1 id="productTitle"></h1>
         <p id="productPrice" class="product-detail-price"></p>
         <div id="productDescription" class="product-description"></div>
-        <div id="productSizeGuide" class="product-size-guide" hidden></div>
         <div class="product-options">
           <div class="product-option-field" id="colorOptionField"></div>
           <div class="product-option-field" id="sizeOptionField"></div>
@@ -117,7 +116,6 @@ function renderProduct() {
     return;
   }
 
-  renderSizeGuideBlock();
   renderOptions();
   updateGallery(getImagesForColor(product, getVariantSelections().color));
   updatePrice();
@@ -141,11 +139,6 @@ function renderProduct() {
 function renderSoldOutState() {
   document.getElementById('colorOptionField').innerHTML = '';
   document.getElementById('sizeOptionField').innerHTML = '';
-  const guideEl = document.getElementById('productSizeGuide');
-  if (guideEl) {
-    guideEl.innerHTML = '';
-    guideEl.hidden = true;
-  }
 
   const priceEl = document.getElementById('productPrice');
   priceEl.textContent = 'Sold Out';
@@ -182,28 +175,19 @@ function renderColorOption() {
   );
 }
 
-function renderSizeGuide(note) {
+function renderSizeGuideMarkup(note) {
   if (!note) return '';
 
   return `
-    <svg class="product-size-guide-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path fill="currentColor" d="M2 7h20v2H2V7zm0 4h1.5v2H2v-2zm3 0h1.5v2H5v-2zm3 0h1.5v2H8v-2zm3 0h1.5v2h-1.5v-2zm3 0h1.5v2h-1.5v-2zm3 0h1.5v2h-1.5v-2zm3 0H20v2h-1.5v-2z"/>
-    </svg>
-    <span>${escapeHtml(note)}</span>
+    <p class="product-size-guide">
+      <svg class="product-size-guide-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <path d="M4 18.5c4.5-6.5 9-8.5 16-8.5"/>
+        <path d="M7.5 16.2 8 14.8M10.5 14.8 11 13.4M13.5 13.4 14 12M16 12l.5-1.4"/>
+        <circle cx="19.5" cy="9.5" r="1.1" fill="currentColor" stroke="none"/>
+      </svg>
+      <span>${escapeHtml(note)}</span>
+    </p>
   `;
-}
-
-function renderSizeGuideBlock() {
-  const guideEl = document.getElementById('productSizeGuide');
-  if (!guideEl) return;
-
-  if (product.sizeGuide) {
-    guideEl.innerHTML = renderSizeGuide(product.sizeGuide);
-    guideEl.hidden = false;
-  } else {
-    guideEl.innerHTML = '';
-    guideEl.hidden = true;
-  }
 }
 
 function renderSizeOption() {
@@ -215,9 +199,12 @@ function renderSizeOption() {
   const allSizes = getOptionValues(product, 'size');
   const sizes = color ? getAvailableSizes(product, color) : allSizes;
 
-  field.innerHTML = renderOptionField('size', 'Size', sizes, {
-    hideSingle: sizes.length <= 1 && getOptionValues(product, 'size').length <= 1
-  });
+  field.innerHTML =
+    renderSizeGuideMarkup(product.sizeGuide) +
+    renderOptionField('size', 'Size', sizes, {
+      hideSingle: sizes.length <= 1 && getOptionValues(product, 'size').length <= 1,
+      hideLabel: true
+    });
 
   const sizeSelect = document.getElementById('sizeSelect');
   if (!sizeSelect) return;
@@ -231,7 +218,7 @@ function renderSizeOption() {
   sizeSelect.addEventListener('change', updatePrice);
 }
 
-function renderOptionField(type, label, values, { hideSingle = false } = {}) {
+function renderOptionField(type, label, values, { hideSingle = false, hideLabel = false } = {}) {
   if (!values.length) return '';
 
   const id = `${type}Select`;
@@ -240,9 +227,14 @@ function renderOptionField(type, label, values, { hideSingle = false } = {}) {
     return `<input type="hidden" id="${id}" value="${escapeHtml(values[0])}">`;
   }
 
+  const labelMarkup = hideLabel
+    ? ''
+    : `<label class="product-option-label" for="${id}">${label}</label>`;
+  const ariaLabel = hideLabel ? ` aria-label="${escapeHtml(label)}"` : '';
+
   return `
-    <label class="product-option-label" for="${id}">${label}</label>
-    <select class="product-select" id="${id}">
+    ${labelMarkup}
+    <select class="product-select" id="${id}"${ariaLabel}>
       <option value="">Choose ${label.toLowerCase()}</option>
       ${values.map((value) => `<option>${escapeHtml(value)}</option>`).join('')}
     </select>
