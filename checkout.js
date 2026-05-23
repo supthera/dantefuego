@@ -11,14 +11,21 @@ const params = new URLSearchParams(window.location.search);
 const stateEl = document.getElementById('checkoutState');
 const embeddedEl = document.getElementById('checkoutEmbedded');
 
-if (params.get('checkout') === 'complete' && params.get('session_id')) {
-  handleReturn(params.get('session_id'));
+const sessionId = params.get('session_id');
+const isCompleteReturn = params.get('checkout') === 'complete' && sessionId;
+
+if (isCompleteReturn) {
+  handleReturn(sessionId);
 } else {
+  if (params.has('checkout') || params.has('session_id')) {
+    history.replaceState({}, '', '/checkout.html');
+  }
   mountCheckout();
 }
 
 async function handleReturn(sessionId) {
   showState('<p class="checkout-loading">Confirming your order...</p>');
+  embeddedEl.hidden = true;
 
   try {
     const res = await fetch(
@@ -33,13 +40,15 @@ async function handleReturn(sessionId) {
 
     if (payload.status === 'open') {
       clearPendingCheckout();
-      window.location.replace('/checkout.html');
+      history.replaceState({}, '', '/checkout.html');
+      mountCheckout();
       return;
     }
 
     if (payload.status === 'complete') {
       clearPendingCheckout();
       clearCart();
+      history.replaceState({}, '', '/checkout.html?checkout=complete');
 
       const emailLine = payload.customer_email
         ? `<p class="checkout-success-email">Confirmation sent to ${escapeHtml(payload.customer_email)}.</p>`
@@ -72,6 +81,7 @@ async function mountCheckout() {
   const payload = readPendingCheckout();
 
   if (!payload) {
+    embeddedEl.hidden = true;
     showState(`
       <div class="checkout-empty">
         <p>Nothing to checkout.</p>
@@ -97,26 +107,36 @@ async function mountCheckout() {
       throw new Error(config.error || 'Checkout is not configured');
     }
 
-    const sessionRes = await fetch('/api/checkout/create-session', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const session = await sessionRes.json();
-
-    if (!sessionRes.ok || !session.clientSecret) {
-      throw new Error(session.error || 'Unable to start checkout');
-    }
-
     if (typeof Stripe !== 'function') {
       throw new Error('Stripe failed to load');
     }
 
     const stripe = Stripe(config.publishableKey);
-    const checkout = await stripe.initEmbeddedCheckout({
-      clientSecret: session.clientSecret
-    });
+    const checkoutPayload = payload;
 
+    const fetchClientSecret = async () => {
+      const sessionRes = await fetch('/api/checkout/create-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(checkoutPayload)
+      });
+      const session = await sessionRes.json();
+
+      if (!sessionRes.ok || !session.clientSecret) {
+        throw new Error(session.error || 'Unable to start checkout');
+      }
+
+      return session.clientSecret;
+    };
+
+    const mountEmbeddedCheckout =
+      stripe.createEmbeddedCheckoutPage?.bind(stripe) || stripe.initEmbeddedCheckout?.bind(stripe);
+
+    if (!mountEmbeddedCheckout) {
+      throw new Error('Stripe embedded checkout is unavailable');
+    }
+
+    const checkout = await mountEmbeddedCheckout({ fetchClientSecret });
     checkout.mount('#checkoutEmbedded');
   } catch (error) {
     embeddedEl.hidden = true;
