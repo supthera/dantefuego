@@ -6,8 +6,8 @@
     "dev": "node server.mjs",
     "start": "node server.mjs",
     "build": "node -e \"console.log('Static site — no build step')\"",
-    "deploy": "wrangler pages deploy . --project-name=dantefuego --commit-dirty=true",
-    "deploy:preview": "wrangler pages deploy . --project-name=dantefuego --branch=preview --commit-dirty=true",
+    "deploy": "wrangler pages deploy . --project-name=dantefuegodev --commit-dirty=true",
+    "deploy:preview": "wrangler pages deploy . --project-name=dantefuegodev --branch=preview --commit-dirty=true",
     "health": "curl -s http://localhost:8080/api/health | python3 -m json.tool",
     "printify:unlock": "node scripts/printify-unlock.mjs"
   },

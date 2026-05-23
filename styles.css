@@ -938,16 +938,6 @@ footer {
   margin-top: 0;
 }
 
-.checkout-payment-label {
-  margin: 0 0 0.85rem;
-  font-family: var(--body-font);
-  font-size: 0.75rem;
-  font-weight: 400;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(240, 230, 211, 0.55);
-}
-
 .checkout-embedded {
   position: relative;
   min-height: 520px;

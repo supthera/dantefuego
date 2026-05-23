@@ -104,7 +104,7 @@ export default {
       published: true,
       title: 'DF x Converse BL-153 (Blood Leopard)',
       description:
-        'Custom Converse Chuck Taylor high-tops with blood leopard canvas, gold eyelets, Dante Fuego heel branding, and a platform lug sole. Ships after manual procurement.',
+        'The Chuck 70 resurrects the 1970s original with heavier 12oz canvas, a glossy vulcanized rubber sole, and an OrthoLite insole for actual arch support. Reinforced stitching at the eyelets and heel means it keeps its shape long after standard All Stars have collapsed into glorified slippers. This edition brings that archive build into bold territory: a split-tone leopard print upper sits atop a rugged sawtooth outsole, finished with metallic gold eyelets, a black inside lining, and a black denim heel stripe that hides its premium details until you\'re up close. Same silhouette. Wilder hardware. Built to be worn.',
       images: converseImages,
       options: [
         { type: 'color', values: [{ title: 'Blood Leopard' }] },

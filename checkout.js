@@ -93,7 +93,6 @@ async function mountCheckout() {
       <div class="checkout-layout">
         ${renderOrderSummary(rows)}
         <section class="checkout-payment" aria-label="Payment">
-          <p class="checkout-payment-label">Payment &amp; shipping</p>
           <div id="checkoutEmbedded" class="checkout-embedded"></div>
         </section>
       </div>
@@ -128,14 +127,11 @@ async function mountCheckout() {
       return session.clientSecret;
     };
 
-    const mountEmbeddedCheckout =
-      stripe.createEmbeddedCheckoutPage?.bind(stripe) || stripe.initEmbeddedCheckout?.bind(stripe);
-
-    if (!mountEmbeddedCheckout) {
-      throw new Error('Stripe embedded checkout is unavailable');
+    if (typeof stripe.createEmbeddedCheckoutPage !== 'function') {
+      throw new Error('Stripe embedded checkout is unavailable — update js.stripe.com/v3');
     }
 
-    const checkout = await mountEmbeddedCheckout({ fetchClientSecret });
+    const checkout = await stripe.createEmbeddedCheckoutPage({ fetchClientSecret });
     checkout.mount('#checkoutEmbedded');
   } catch (error) {
     showError(error.message || 'Unable to start checkout', '/cart.html');
