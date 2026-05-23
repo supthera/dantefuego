@@ -6,15 +6,9 @@ import {
   removeFromCart,
   updateCartQuantity
 } from './js/cart.js';
+import { renderCartLine, resolveLineItem } from './js/cart-lines.js';
 import { startCheckout } from './js/checkout-flow.js';
-import {
-  escapeHtml,
-  findVariant,
-  formatCents,
-  formatProductTitleMarkup,
-  pickImage,
-  productUrl
-} from './js/product-utils.js';
+import { escapeHtml, formatCents } from './js/product-utils.js';
 
 initFonts();
 preloadCursors();
@@ -60,7 +54,7 @@ async function renderCart() {
       ${params.get('checkout') === 'success' ? '<p class="cart-notice cart-notice-success">Payment received. Thank you.</p>' : ''}
       ${params.get('checkout') === 'cancel' ? '<p class="cart-notice">Checkout was canceled.</p>' : ''}
       <ul class="cart-list">
-        ${validRows.map((row) => renderCartRow(row)).join('')}
+        ${validRows.map((row) => renderCartLine(row)).join('')}
       </ul>
       <div class="cart-summary">
         <div class="cart-summary-row">
@@ -79,75 +73,11 @@ async function renderCart() {
 }
 
 async function resolveCartItem(item) {
-  const res = await fetch(`/api/products/${encodeURIComponent(item.productId)}`, { cache: 'no-store' });
-  const payload = await res.json();
-
-  if (!res.ok) {
-    throw new Error(payload.error || 'Failed to load cart item');
-  }
-
-  const product = payload.data;
-
-  if (product.soldOut) {
+  const row = await resolveLineItem(item);
+  if (!row) {
     removeFromCart(item.productId, item.variantId);
-    return null;
   }
-
-  const variant =
-    (product.variants || []).find((entry) => String(entry.id) === String(item.variantId)) ||
-    findVariant(product, { color: item.color, size: item.size });
-
-  if (!variant?.price) {
-    removeFromCart(item.productId, item.variantId);
-    return null;
-  }
-
-  const image = pickImage(product.images || []);
-
-  return {
-    productId: product.id,
-    variantId: variant.id,
-    color: item.color || '',
-    size: item.size || '',
-    quantity: item.quantity || 1,
-    title: product.title,
-    price: variant.price,
-    imageSrc: item.imageSrc || image?.src || ''
-  };
-}
-
-function renderCartRow(row) {
-  const variantLabel = [row.color, row.size].filter(Boolean).join(' · ');
-
-  return `
-    <li class="cart-item" data-product-id="${escapeHtml(row.productId)}" data-variant-id="${escapeHtml(row.variantId)}">
-      <a class="cart-item-image" href="${productUrl(row.productId, row.imageSrc)}">
-        ${
-          row.imageSrc
-            ? `<img src="${escapeHtml(row.imageSrc)}" alt="" width="120" height="160" loading="lazy" decoding="async">`
-            : '<div class="cart-item-placeholder">&#9830;</div>'
-        }
-      </a>
-      <div class="cart-item-details">
-        <a class="cart-item-title" href="${productUrl(row.productId, row.imageSrc)}">${formatProductTitleMarkup(row.title)}</a>
-        ${variantLabel ? `<p class="cart-item-variant">${escapeHtml(variantLabel)}</p>` : ''}
-        <p class="cart-item-price">${escapeHtml(formatCents(row.price))}</p>
-        <div class="cart-item-actions">
-          <label class="cart-qty-label" for="qty-${escapeHtml(row.productId)}-${escapeHtml(row.variantId)}">Qty</label>
-          <input
-            class="cart-qty-input"
-            id="qty-${escapeHtml(row.productId)}-${escapeHtml(row.variantId)}"
-            type="number"
-            min="1"
-            max="10"
-            value="${row.quantity}"
-          >
-          <button class="cart-remove-btn" type="button">Remove</button>
-        </div>
-      </div>
-      <p class="cart-item-total">${escapeHtml(formatCents(row.price * row.quantity))}</p>
-    </li>
-  `;
+  return row;
 }
 
 function bindCartEvents(rows) {
@@ -171,7 +101,7 @@ function bindCartEvents(rows) {
   document.getElementById('cartCheckoutBtn')?.addEventListener('click', () => handleCheckout(rows));
 }
 
-async function handleCheckout(rows) {
+function handleCheckout(rows) {
   startCheckout({
     items: rows.map((row) => ({
       productId: row.productId,

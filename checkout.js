@@ -1,5 +1,6 @@
 import { initFonts, preloadCursors } from './js/site.js';
 import { clearCart, initCartBadge } from './js/cart.js';
+import { renderOrderSummary, resolveCheckoutLines } from './js/cart-lines.js';
 import { clearPendingCheckout, readPendingCheckout } from './js/checkout-flow.js';
 import { escapeHtml } from './js/product-utils.js';
 
@@ -8,14 +9,15 @@ preloadCursors();
 initCartBadge();
 
 const params = new URLSearchParams(window.location.search);
-const stateEl = document.getElementById('checkoutState');
-const embeddedEl = document.getElementById('checkoutEmbedded');
+const contentEl = document.getElementById('checkoutContent');
 
 const sessionId = params.get('session_id');
 const isCompleteReturn = params.get('checkout') === 'complete' && sessionId;
 
 if (isCompleteReturn) {
   handleReturn(sessionId);
+} else if (params.get('checkout') === 'complete') {
+  showSuccess(null);
 } else {
   if (params.has('checkout') || params.has('session_id')) {
     history.replaceState({}, '', '/checkout.html');
@@ -24,8 +26,7 @@ if (isCompleteReturn) {
 }
 
 async function handleReturn(sessionId) {
-  showState('<p class="checkout-loading">Confirming your order...</p>');
-  embeddedEl.hidden = true;
+  showLoading('Confirming your order...');
 
   try {
     const res = await fetch(
@@ -49,31 +50,13 @@ async function handleReturn(sessionId) {
       clearPendingCheckout();
       clearCart();
       history.replaceState({}, '', '/checkout.html?checkout=complete');
-
-      const emailLine = payload.customer_email
-        ? `<p class="checkout-success-email">Confirmation sent to ${escapeHtml(payload.customer_email)}.</p>`
-        : '<p class="checkout-success-email">A receipt and invoice will be emailed to you shortly.</p>';
-
-      showState(`
-        <div class="checkout-success">
-          <p class="collection-eyebrow">Order confirmed</p>
-          <h1 class="checkout-title">Thank you</h1>
-          <p class="checkout-success-copy">Your payment was received. We will fulfill your order shortly.</p>
-          ${emailLine}
-          <a class="checkout-back-link" href="/#products">Continue shopping</a>
-        </div>
-      `);
+      showSuccess(payload.customer_email);
       return;
     }
 
     throw new Error('Checkout was not completed');
   } catch (error) {
-    showState(`
-      <div class="checkout-error">
-        <p>${escapeHtml(error.message || 'Unable to confirm order')}</p>
-        <a class="checkout-back-link" href="/checkout.html">Return to checkout</a>
-      </div>
-    `);
+    showError(error.message || 'Unable to confirm order', '/checkout.html');
   }
 }
 
@@ -81,25 +64,41 @@ async function mountCheckout() {
   const payload = readPendingCheckout();
 
   if (!payload) {
-    embeddedEl.hidden = true;
-    showState(`
-      <div class="checkout-empty">
+    contentEl.innerHTML = `
+      <div class="cart-empty">
         <p>Nothing to checkout.</p>
-        <a class="checkout-back-link" href="/#products">Browse the collection</a>
+        <a class="cart-empty-link" href="/#products">Browse the collection</a>
       </div>
-    `);
+    `;
     return;
   }
 
-  showState(`
-    <p class="collection-eyebrow">Secure checkout</p>
-    <h1 class="checkout-title">Complete your order</h1>
-    <p class="checkout-lead">Enter shipping and payment below. You will receive a receipt and invoice by email.</p>
-  `);
-
-  embeddedEl.hidden = false;
+  contentEl.innerHTML = '<div class="cart-loading">Loading checkout...</div>';
 
   try {
+    const rows = await resolveCheckoutLines(payload);
+
+    if (!rows.length) {
+      clearPendingCheckout();
+      contentEl.innerHTML = `
+        <div class="cart-empty">
+          <p>These items are no longer available.</p>
+          <a class="cart-empty-link" href="/cart.html">Return to cart</a>
+        </div>
+      `;
+      return;
+    }
+
+    contentEl.innerHTML = `
+      <div class="checkout-layout">
+        ${renderOrderSummary(rows)}
+        <section class="checkout-payment" aria-label="Payment">
+          <p class="checkout-payment-label">Payment &amp; shipping</p>
+          <div id="checkoutEmbedded" class="checkout-embedded"></div>
+        </section>
+      </div>
+    `;
+
     const configRes = await fetch('/api/checkout/config', { cache: 'no-store' });
     const config = await configRes.json();
 
@@ -139,16 +138,33 @@ async function mountCheckout() {
     const checkout = await mountEmbeddedCheckout({ fetchClientSecret });
     checkout.mount('#checkoutEmbedded');
   } catch (error) {
-    embeddedEl.hidden = true;
-    showState(`
-      <div class="checkout-error">
-        <p>${escapeHtml(error.message || 'Unable to start checkout')}</p>
-        <a class="checkout-back-link" href="/cart.html">Back to cart</a>
-      </div>
-    `);
+    showError(error.message || 'Unable to start checkout', '/cart.html');
   }
 }
 
-function showState(markup) {
-  stateEl.innerHTML = markup;
+function showLoading(message) {
+  contentEl.innerHTML = `<div class="cart-loading">${escapeHtml(message)}</div>`;
+}
+
+function showSuccess(customerEmail) {
+  const emailLine = customerEmail
+    ? `<p class="cart-notice cart-notice-success">Confirmation sent to ${escapeHtml(customerEmail)}.</p>`
+    : '<p class="cart-notice cart-notice-success">A receipt and invoice will be emailed to you shortly.</p>';
+
+  contentEl.innerHTML = `
+    <div class="checkout-success">
+      ${emailLine}
+      <p class="checkout-success-copy">Your payment was received. We will fulfill your order shortly.</p>
+      <a class="cart-empty-link" href="/#products">Continue shopping</a>
+    </div>
+  `;
+}
+
+function showError(message, backHref) {
+  contentEl.innerHTML = `
+    <div class="cart-empty cart-empty-error">
+      <p>${escapeHtml(message)}</p>
+      <a class="cart-empty-link" href="${escapeHtml(backHref)}">Go back</a>
+    </div>
+  `;
 }
