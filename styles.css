@@ -812,6 +812,7 @@ html.fonts-pending .footer-logo-text {
   font-size: 0.95rem;
   line-height: 1.7;
   color: rgba(240,230,211,0.65);
+  margin-top: 1rem;
   margin-bottom: 2rem;
   max-width: 36rem;
   white-space: pre-line;
@@ -841,7 +842,7 @@ html.fonts-pending .footer-logo-text {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   max-width: 24rem;
 }
 
