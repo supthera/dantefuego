@@ -38,7 +38,6 @@ if (!productId) {
 
 function productShellMarkup() {
   return `
-    <a class="product-back" href="/#products">Back to Collection</a>
     <div class="product-layout">
       <div class="product-gallery">
         <div class="product-gallery-main">
@@ -90,7 +89,7 @@ async function loadProduct(id) {
 }
 
 function showError(message) {
-  pageRoot.innerHTML = `<div class="product-state product-state-error">${escapeHtml(message)}</div><a class="product-back" href="/#products">Back to Collection</a>`;
+  pageRoot.innerHTML = `<div class="product-state product-state-error">${escapeHtml(message)}</div>`;
 }
 
 function renderProduct() {
