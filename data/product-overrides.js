@@ -3,7 +3,7 @@
  */
 export default {
   titles: {
-    '6a0f5f6fc72b45aa900e1b4f': 'DFSD Hoodie (Skull & Dagger)'
+    '6a0f5f6fc72b45aa900e1b4f': 'Skull & Dagger Hoodie'
   },
   descriptions: {
     '6a0f5f6fc72b45aa900e1b4f':
