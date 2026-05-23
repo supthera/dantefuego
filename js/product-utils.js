@@ -231,6 +231,11 @@ function getSizesFromVariantTitles(product) {
   return sortSizeTitles([...sizes]);
 }
 
+function parseMenSize(title) {
+  const match = String(title).match(/Men'?s?\s+([\d.]+)/i);
+  return match ? parseFloat(match[1]) : null;
+}
+
 function sortSizeTitles(sizes) {
   const order = ['XXS', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL', 'ONE SIZE'];
   return sizes.sort((a, b) => {
@@ -239,6 +244,13 @@ function sortSizeTitles(sizes) {
     if (aIdx >= 0 && bIdx >= 0) return aIdx - bIdx;
     if (aIdx >= 0) return -1;
     if (bIdx >= 0) return 1;
+
+    const aMen = parseMenSize(a);
+    const bMen = parseMenSize(b);
+    if (aMen !== null && bMen !== null) return aMen - bMen;
+    if (aMen !== null) return -1;
+    if (bMen !== null) return 1;
+
     return a.localeCompare(b);
   });
 }
