@@ -3,7 +3,8 @@
  */
 export default {
   titles: {
-    '6a0f5f6fc72b45aa900e1b4f': 'Skull & Dagger Hoodie'
+    '6a0f5f6fc72b45aa900e1b4f': 'Skull & Dagger Hoodie',
+    '6a0f6e9721c73c43f90388cd': 'Ninja Jesuits Backpack'
   },
   descriptions: {
     '6a0f5f6fc72b45aa900e1b4f':
