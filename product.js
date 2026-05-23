@@ -1,5 +1,6 @@
 import { initFonts, preloadCursors } from './js/site.js';
 import { addToCart, initCartBadge } from './js/cart.js';
+import { startCheckout } from './js/checkout-flow.js';
 import {
   escapeHtml,
   findVariant,
@@ -329,7 +330,7 @@ async function handleCheckout() {
   stripeBtn.disabled = true;
 
   try {
-    await startCheckout({
+    await startCheckoutSession({
       productId: product.id,
       variantId: variant.id,
       color: variant.color,
@@ -388,17 +389,6 @@ function getSelectedVariant() {
   return { ...variant, color, size };
 }
 
-async function startCheckout(item) {
-  const res = await fetch('/api/checkout/create-session', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(item)
-  });
-  const payload = await res.json();
-
-  if (!res.ok) {
-    throw new Error(payload.error || 'Checkout failed');
-  }
-
-  window.location.href = payload.url;
+async function startCheckoutSession(item) {
+  startCheckout(item);
 }

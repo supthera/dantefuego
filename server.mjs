@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { getPrintifyEnv } from './lib/env.js';
 import { unlockStuckPrintifyProducts } from './lib/printify-admin.js';
 import { fetchCatalogProduct, fetchCatalogProducts } from './lib/catalog.js';
-import { createCheckoutSession } from './lib/stripe.js';
+import { createCheckoutSession, getCheckoutSessionStatus } from './lib/stripe.js';
 import { handleStripeWebhook } from './lib/stripe-webhook.js';
 import { jsonResponse } from './lib/printify.js';
 import { getHealthStatus } from './lib/health.js';
@@ -83,8 +83,42 @@ const server = http.createServer(async (req, res) => {
       }
 
       const body = await readJsonBody(req);
-      const session = await createCheckoutSession(process.env, body);
+      const session = await createCheckoutSession(process.env, body, {
+        url: `http://${req.headers.host}${url.pathname}`
+      });
       sendJson(res, session, 200);
+      return;
+    }
+
+    if (url.pathname === '/api/checkout/config') {
+      if (req.method !== 'GET') {
+        sendJson(res, { error: 'Method not allowed' }, 405);
+        return;
+      }
+
+      const publishableKey = process.env.STRIPE_PUBLISHABLE_KEY || '';
+      if (!publishableKey) {
+        sendJson(res, { error: 'Missing STRIPE_PUBLISHABLE_KEY' }, 503);
+        return;
+      }
+
+      sendJson(res, { publishableKey }, 200);
+      return;
+    }
+
+    if (url.pathname === '/api/checkout/session-status') {
+      if (req.method !== 'GET') {
+        sendJson(res, { error: 'Method not allowed' }, 405);
+        return;
+      }
+
+      try {
+        const sessionId = url.searchParams.get('session_id');
+        const data = await getCheckoutSessionStatus(process.env, sessionId);
+        sendJson(res, data, 200);
+      } catch (error) {
+        sendJson(res, { error: error.message || 'Failed to retrieve session' }, 400);
+      }
       return;
     }
 

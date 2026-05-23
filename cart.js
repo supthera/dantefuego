@@ -6,6 +6,7 @@ import {
   removeFromCart,
   updateCartQuantity
 } from './js/cart.js';
+import { startCheckout } from './js/checkout-flow.js';
 import {
   escapeHtml,
   findVariant,
@@ -171,32 +172,13 @@ function bindCartEvents(rows) {
 }
 
 async function handleCheckout(rows) {
-  const checkoutBtn = document.getElementById('cartCheckoutBtn');
-  checkoutBtn.disabled = true;
-
-  try {
-    const res = await fetch('/api/checkout/create-session', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        items: rows.map((row) => ({
-          productId: row.productId,
-          variantId: row.variantId,
-          color: row.color,
-          size: row.size,
-          quantity: row.quantity
-        }))
-      })
-    });
-    const payload = await res.json();
-
-    if (!res.ok) {
-      throw new Error(payload.error || 'Checkout failed');
-    }
-
-    window.location.href = payload.url;
-  } catch (error) {
-    alert(error.message || 'Unable to start checkout');
-    checkoutBtn.disabled = false;
-  }
+  startCheckout({
+    items: rows.map((row) => ({
+      productId: row.productId,
+      variantId: row.variantId,
+      color: row.color,
+      size: row.size,
+      quantity: row.quantity
+    }))
+  });
 }
