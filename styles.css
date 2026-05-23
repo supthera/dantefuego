@@ -513,15 +513,6 @@ html.fonts-pending .footer-logo-text {
   letter-spacing: 0.03em;
 }
 
-.product-title-main,
-.product-title-sub {
-  display: block;
-}
-
-.product-title-sub {
-  margin-top: 0.1em;
-}
-
 .df-meta {
   display: flex;
   align-items: center;

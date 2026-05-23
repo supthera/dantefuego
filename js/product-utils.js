@@ -7,14 +7,7 @@ export function escapeHtml(value) {
 }
 
 export function formatProductTitleMarkup(title) {
-  const value = String(title || '').trim();
-  const match = value.match(/^(.+?)\s(\([^)]+\))$/);
-
-  if (!match || match[1].endsWith(':')) {
-    return escapeHtml(value);
-  }
-
-  return `<span class="product-title-main">${escapeHtml(match[1])}</span><span class="product-title-sub">${escapeHtml(match[2])}</span>`;
+  return escapeHtml(String(title || '').trim());
 }
 
 export function formatPrice(variants) {
