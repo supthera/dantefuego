@@ -105,6 +105,7 @@ export default {
       title: 'DF x Converse BL-153 (Blood Leopard)',
       description:
         'Dante Fuego reworks the Chuck 70 as the BL-153: Blood Leopard. The 1970s original gets its heavier 12oz canvas, glossy vulcanized sole, and OrthoLite insole — the build that outlasts standard All Stars once they\'ve collapsed into glorified slippers. Fuego\'s take brings that archive construction into bold territory: a split-tone leopard print upper and rugged sawtooth outsole are finished with metallic gold eyelets, a black inside lining, and a black denim heel stripe. Same silhouette. Wilder hardware. Built to be worn.',
+      sizeGuide: 'This style runs large. Order a half size down.',
       images: converseImages,
       options: [
         { type: 'color', values: [{ title: 'Blood Leopard' }] },
@@ -118,6 +119,7 @@ export default {
       title: 'DF x Converse EZ-369 (Ebony Zebra)',
       description:
         'Custom Converse Chuck Taylor high-tops in ebony zebra canvas, silver eyelets, red DANTE FUEGO heel branding, and a black platform lug sole. Ships after manual procurement.',
+      sizeGuide: 'This style runs large. Order a half size down.',
       images: converse2Images,
       options: [
         { type: 'color', values: [{ title: 'Ebony Zebra' }] },

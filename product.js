@@ -51,6 +51,7 @@ function productShellMarkup() {
         <h1 id="productTitle"></h1>
         <p id="productPrice" class="product-detail-price"></p>
         <div id="productDescription" class="product-description"></div>
+        <div id="productSizeGuide" class="product-size-guide" hidden></div>
         <div class="product-options">
           <div class="product-option-field" id="colorOptionField"></div>
           <div class="product-option-field" id="sizeOptionField"></div>
@@ -116,6 +117,7 @@ function renderProduct() {
     return;
   }
 
+  renderSizeGuideBlock();
   renderOptions();
   updateGallery(getImagesForColor(product, getVariantSelections().color));
   updatePrice();
@@ -139,6 +141,11 @@ function renderProduct() {
 function renderSoldOutState() {
   document.getElementById('colorOptionField').innerHTML = '';
   document.getElementById('sizeOptionField').innerHTML = '';
+  const guideEl = document.getElementById('productSizeGuide');
+  if (guideEl) {
+    guideEl.innerHTML = '';
+    guideEl.hidden = true;
+  }
 
   const priceEl = document.getElementById('productPrice');
   priceEl.textContent = 'Sold Out';
@@ -173,6 +180,30 @@ function renderColorOption() {
     getOptionValues(product, 'color'),
     { hideSingle: true }
   );
+}
+
+function renderSizeGuide(note) {
+  if (!note) return '';
+
+  return `
+    <svg class="product-size-guide-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path fill="currentColor" d="M2 7h20v2H2V7zm0 4h1.5v2H2v-2zm3 0h1.5v2H5v-2zm3 0h1.5v2H8v-2zm3 0h1.5v2h-1.5v-2zm3 0h1.5v2h-1.5v-2zm3 0h1.5v2h-1.5v-2zm3 0H20v2h-1.5v-2z"/>
+    </svg>
+    <span>${escapeHtml(note)}</span>
+  `;
+}
+
+function renderSizeGuideBlock() {
+  const guideEl = document.getElementById('productSizeGuide');
+  if (!guideEl) return;
+
+  if (product.sizeGuide) {
+    guideEl.innerHTML = renderSizeGuide(product.sizeGuide);
+    guideEl.hidden = false;
+  } else {
+    guideEl.innerHTML = '';
+    guideEl.hidden = true;
+  }
 }
 
 function renderSizeOption() {
