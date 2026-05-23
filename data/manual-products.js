@@ -104,7 +104,7 @@ export default {
       published: true,
       title: 'DF x Converse BL-153 (Blood Leopard)',
       description:
-        'The Chuck 70 resurrects the 1970s original with heavier 12oz canvas, a glossy vulcanized rubber sole, and an OrthoLite insole for actual arch support. Reinforced stitching at the eyelets and heel means it keeps its shape long after standard All Stars have collapsed into glorified slippers. This edition brings that archive build into bold territory: a split-tone leopard print upper sits atop a rugged sawtooth outsole, finished with metallic gold eyelets, a black inside lining, and a black denim heel stripe that hides its premium details until you\'re up close. Same silhouette. Wilder hardware. Built to be worn.',
+        'Dante Fuego reworks the Chuck 70 as the BL-153: Blood Leopard. The 1970s original gets its heavier 12oz canvas, glossy vulcanized sole, and OrthoLite insole — the build that outlasts standard All Stars once they\'ve collapsed into glorified slippers. Fuego\'s take brings that archive construction into bold territory: a split-tone leopard print upper and rugged sawtooth outsole are finished with metallic gold eyelets, a black inside lining, and a black denim heel stripe. Same silhouette. Wilder hardware. Built to be worn.',
       images: converseImages,
       options: [
         { type: 'color', values: [{ title: 'Blood Leopard' }] },
