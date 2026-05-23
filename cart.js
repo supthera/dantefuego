@@ -86,6 +86,12 @@ async function resolveCartItem(item) {
   }
 
   const product = payload.data;
+
+  if (product.soldOut) {
+    removeFromCart(item.productId, item.variantId);
+    return null;
+  }
+
   const variant =
     (product.variants || []).find((entry) => String(entry.id) === String(item.variantId)) ||
     findVariant(product, { color: item.color, size: item.size });

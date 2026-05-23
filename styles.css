@@ -465,6 +465,26 @@ html.fonts-pending .footer-logo-text {
   text-transform: uppercase;
 }
 
+.df-badge-sold-out {
+  background: rgba(40,40,40,0.85);
+  border-color: rgba(255,255,255,0.15);
+  color: rgba(240,230,211,0.75);
+}
+
+.df-card-sold-out .df-img,
+.df-card-sold-out .df-img-placeholder {
+  filter: grayscale(0.35) brightness(0.82);
+}
+
+.df-status-sold-out {
+  font-family: var(--body-font);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: rgba(240,230,211,0.55);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
 .df-info {
   padding: 16px 18px 20px;
   border-top: 1px solid rgba(255,255,255,0.05);
@@ -829,6 +849,22 @@ html.fonts-pending .footer-logo-text {
 .product-option-static .product-option-label {
   display: block;
   margin-bottom: 0.35rem;
+}
+
+.product-detail-price-sold-out {
+  color: rgba(240,230,211,0.55);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.product-sold-out-notice {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  color: rgba(240,230,211,0.7);
+  font-size: 0.92rem;
+  line-height: 1.5;
 }
 
 .product-actions {

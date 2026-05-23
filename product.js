@@ -111,6 +111,11 @@ function renderProduct() {
     descriptionEl.hidden = true;
   }
 
+  if (product.soldOut) {
+    renderSoldOutState();
+    return;
+  }
+
   renderOptions();
   updateGallery(getImagesForColor(product, getVariantSelections().color));
   updatePrice();
@@ -128,6 +133,22 @@ function renderProduct() {
   if (!addToCartBtn.dataset.bound) {
     addToCartBtn.dataset.bound = '1';
     addToCartBtn.addEventListener('click', handleAddToCart);
+  }
+}
+
+function renderSoldOutState() {
+  document.getElementById('colorOptionField').innerHTML = '';
+  document.getElementById('sizeOptionField').innerHTML = '';
+
+  const priceEl = document.getElementById('productPrice');
+  priceEl.textContent = 'Sold Out';
+  priceEl.classList.add('product-detail-price-sold-out');
+
+  updateGallery(uniqueImages(product.images || []));
+
+  const actionsEl = document.querySelector('.product-actions');
+  if (actionsEl) {
+    actionsEl.innerHTML = '<p class="product-sold-out-notice">This piece is sold out and no longer available to order.</p>';
   }
 }
 

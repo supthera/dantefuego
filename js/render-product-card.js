@@ -41,29 +41,36 @@ export const MOCK_PRODUCTS = [
 export function renderProductCard(product) {
   const img = pickImage(product.images);
   const price = formatPrice(product.variants || []);
-  const badge = product.badge
-    ? `<div class="df-badge">${escapeHtml(product.badge)}</div>`
-    : '';
+  const soldOut = Boolean(product.soldOut);
+  const badge = soldOut
+    ? `<div class="df-badge df-badge-sold-out">Sold Out</div>`
+    : product.badge
+      ? `<div class="df-badge">${escapeHtml(product.badge)}</div>`
+      : '';
   const placeholder = product.placeholderGlyph || '&#9830;';
+  const cardClass = soldOut ? 'df-card df-card-sold-out' : 'df-card';
+  const metaMarkup = soldOut
+    ? `<span class="df-status df-status-sold-out">Sold Out</span>`
+    : `<span class="df-price">${escapeHtml(price)}</span>`;
 
   const imageMarkup = img
     ? `<img class="df-img" src="${escapeHtml(img.src)}" alt="${escapeHtml(product.title)}" width="900" height="1200" loading="lazy" decoding="async">`
     : `<div class="df-img-placeholder">${placeholder}</div>`;
 
-  return `<a class="df-card" href="${productUrl(product.id, img?.src)}" data-product-id="${escapeHtml(product.id)}">
+  return `<a class="${cardClass}" href="${productUrl(product.id, img?.src)}" data-product-id="${escapeHtml(product.id)}">
     <div class="df-img-wrap">
       ${imageMarkup}
       <div class="df-ember df-ember-1"></div>
       <div class="df-ember df-ember-2"></div>
       <div class="df-ember df-ember-3"></div>
       ${badge}
-      <div class="df-overlay"><span class="df-overlay-btn">View Product</span></div>
+      <div class="df-overlay"><span class="df-overlay-btn">${soldOut ? 'View Details' : 'View Product'}</span></div>
     </div>
     <div class="df-info">
       <p class="df-name">${formatProductTitleMarkup(product.title)}</p>
       <div class="df-divider"></div>
       <div class="df-meta">
-        <span class="df-price">${escapeHtml(price)}</span>
+        ${metaMarkup}
       </div>
     </div>
   </a>`;

@@ -53,7 +53,49 @@ const converse2Images = [
   { src: '/assets/df-x-converse-2/4.png', position: 'detail' }
 ];
 
-const converseSizes = ['8', '9', '10', '11', '12'];
+const converseSizes = [
+  "Men's 3 / Women's 5",
+  "Men's 3.5 / Women's 5.5",
+  "Men's 4 / Women's 6",
+  "Men's 4.5 / Women's 6.5",
+  "Men's 5 / Women's 7",
+  "Men's 5.5 / Women's 7.5",
+  "Men's 6 / Women's 8",
+  "Men's 6.5 / Women's 8.5",
+  "Men's 7 / Women's 9",
+  "Men's 7.5 / Women's 9.5",
+  "Men's 8 / Women's 10",
+  "Men's 8.5 / Women's 10.5",
+  "Men's 9 / Women's 11",
+  "Men's 9.5 / Women's 11.5",
+  "Men's 10 / Women's 12",
+  "Men's 10.5 / Women's 12.5",
+  "Men's 11 / Women's 13",
+  "Men's 11.5 / Women's 13.5",
+  "Men's 12 / Women's 14",
+  "Men's 13 / Women's 15",
+  "Men's 14 / Women's 16",
+  "Men's 15 / Women's 17",
+  "Men's 16 / Women's 18"
+];
+
+const DEFAULT_CONVERSE_SIZE = "Men's 4 / Women's 6";
+
+function converseVariantId(sizeLabel) {
+  const match = sizeLabel.match(/Men's ([\d.]+)/);
+  return match ? `m-${match[1].replace('.', '-')}` : `size-${sizeLabel.length}`;
+}
+
+function buildConverseVariants(colorTitle, price) {
+  return converseSizes.map((size, index) => ({
+    id: converseVariantId(size),
+    price,
+    title: `${colorTitle} / ${size}`,
+    is_enabled: true,
+    is_default: size === DEFAULT_CONVERSE_SIZE,
+    options: [0, index]
+  }));
+}
 
 export default {
   products: [
@@ -66,16 +108,9 @@ export default {
       images: converseImages,
       options: [
         { type: 'color', values: [{ title: 'Blood Leopard' }] },
-        { type: 'size', values: converseSizes.map((title) => ({ title: `US ${title}` })) }
+        { type: 'size', values: converseSizes.map((title) => ({ title })) }
       ],
-      variants: converseSizes.map((size, index) => ({
-        id: `us-${size}`,
-        price: 15000,
-        title: `Blood Leopard / US ${size}`,
-        is_enabled: true,
-        is_default: size === '10',
-        options: [0, index]
-      }))
+      variants: buildConverseVariants('Blood Leopard', 15000)
     },
     {
       id: 'manual-df-x-converse-2',
@@ -86,16 +121,9 @@ export default {
       images: converse2Images,
       options: [
         { type: 'color', values: [{ title: 'Ebony Zebra' }] },
-        { type: 'size', values: converseSizes.map((title) => ({ title: `US ${title}` })) }
+        { type: 'size', values: converseSizes.map((title) => ({ title })) }
       ],
-      variants: converseSizes.map((size, index) => ({
-        id: `us-${size}`,
-        price: 13000,
-        title: `Ebony Zebra / US ${size}`,
-        is_enabled: true,
-        is_default: size === '10',
-        options: [0, index]
-      }))
+      variants: buildConverseVariants('Ebony Zebra', 13000)
     }
   ]
 };
