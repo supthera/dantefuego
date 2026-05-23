@@ -67,9 +67,8 @@ export function renderProductCard(product) {
       <div class="df-overlay"><span class="df-overlay-btn">${soldOut ? 'View Details' : 'View Product'}</span></div>
     </div>
     <div class="df-info">
-      <p class="df-name">${formatProductTitleMarkup(product.title)}</p>
-      <div class="df-divider"></div>
       <div class="df-meta">
+        <p class="df-name">${formatProductTitleMarkup(product.title)}</p>
         ${metaMarkup}
       </div>
     </div>

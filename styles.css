@@ -495,10 +495,12 @@ html.fonts-pending .footer-logo-text {
   color: rgba(240,230,211,0.55);
   letter-spacing: 0.14em;
   text-transform: uppercase;
+  flex-shrink: 0;
+  align-self: baseline;
 }
 
 .df-info {
-  padding: 16px 18px 20px;
+  padding: 14px 16px 16px;
   border-top: 1px solid rgba(255,255,255,0.05);
   background: rgba(0,0,0,0.3);
 }
@@ -508,14 +510,16 @@ html.fonts-pending .footer-logo-text {
   font-weight: 400;
   font-style: italic;
   color: rgba(240,230,211,0.9);
-  margin: 0 0 6px;
+  margin: 0;
   line-height: 1.35;
   letter-spacing: 0.03em;
+  flex: 1;
+  min-width: 0;
 }
 
 .df-meta {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   gap: 12px;
 }
@@ -527,6 +531,8 @@ html.fonts-pending .footer-logo-text {
   color: var(--gold);
   letter-spacing: 0.08em;
   white-space: nowrap;
+  flex-shrink: 0;
+  align-self: baseline;
 }
 
 .df-colors {
@@ -565,12 +571,6 @@ html.fonts-pending .footer-logo-text {
 .df-size-tag.active {
   color: var(--gold);
   border-color: rgba(201,168,76,0.4);
-}
-
-.df-divider {
-  height: 1px;
-  background: linear-gradient(to right, transparent, rgba(201,168,76,0.15), transparent);
-  margin: 10px 0;
 }
 
 .product-card {
