@@ -120,7 +120,7 @@ const server = http.createServer(async (req, res) => {
 
       sendJson(res, {
         accessKey,
-        contactEmail: process.env.CONTACT_EMAIL || process.env.NOTIFY_EMAIL || 'hello@dantefuego.com'
+        contactEmail: process.env.CONTACT_EMAIL || 'hello@dantefuego.com'
       }, 200);
       return;
     }

@@ -2,7 +2,7 @@ import { initFonts, preloadCursors } from './js/site.js';
 import { initCartBadge } from './js/cart.js';
 
 const WEB3FORMS_URL = 'https://api.web3forms.com/submit';
-const DEFAULT_CONTACT_EMAIL = 'hello@dantefuego.com';
+const PUBLIC_CONTACT_EMAIL = 'hello@dantefuego.com';
 
 initFonts();
 preloadCursors();
@@ -16,8 +16,7 @@ const submitBtn = document.getElementById('contactSubmit');
 const mailtoLink = document.getElementById('contactMailto');
 
 let contactConfig = {
-  accessKey: '',
-  contactEmail: DEFAULT_CONTACT_EMAIL
+  accessKey: ''
 };
 let emailTouched = false;
 
@@ -30,11 +29,6 @@ async function loadContactConfig() {
 
     const data = await res.json();
     if (data.accessKey) contactConfig.accessKey = String(data.accessKey).trim();
-    if (data.contactEmail) {
-      contactConfig.contactEmail = String(data.contactEmail).trim();
-      mailtoLink.href = `mailto:${contactConfig.contactEmail}`;
-      mailtoLink.textContent = contactConfig.contactEmail;
-    }
   } catch {
     // Keep defaults — form will show a config message on submit.
   }
@@ -111,7 +105,7 @@ function buildFormData(values, accessKey) {
 }
 
 function web3formsErrorMessage(data) {
-  const fallback = `Something went wrong. Please try again or email ${contactConfig.contactEmail}.`;
+  const fallback = `Something went wrong. Please try again or email ${PUBLIC_CONTACT_EMAIL}.`;
   if (!data || typeof data !== 'object') return fallback;
   if (data.body?.message) return String(data.body.message);
   if (data.message) return String(data.message);
@@ -156,7 +150,7 @@ form.addEventListener('submit', async (event) => {
 
   if (!contactConfig.accessKey) {
     showStatus(
-      `This form is not configured yet. Email ${contactConfig.contactEmail} directly.`,
+      `This form is not configured yet. Email ${PUBLIC_CONTACT_EMAIL} directly.`,
       'error'
     );
     return;
@@ -186,7 +180,7 @@ form.addEventListener('submit', async (event) => {
     showStatus(web3formsErrorMessage(data), 'error');
   } catch {
     showStatus(
-      `Network error. Check your connection or email ${contactConfig.contactEmail} directly.`,
+      `Network error. Check your connection or email ${PUBLIC_CONTACT_EMAIL} directly.`,
       'error'
     );
   } finally {
