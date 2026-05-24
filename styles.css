@@ -776,6 +776,192 @@ html.fonts-pending .footer-logo-text {
   white-space: pre-line;
 }
 
+.rome-trigger {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  cursor: pointer;
+  text-decoration: underline dotted rgba(240,230,211,0.25);
+  text-underline-offset: 0.15em;
+}
+
+.rome-trigger:hover {
+  color: rgba(240,230,211,0.9);
+  text-decoration-color: rgba(200,40,40,0.55);
+}
+
+.rome-scare-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  pointer-events: none;
+  overflow: hidden;
+  animation: rome-scare-vignette 2.8s ease-out forwards;
+}
+
+.rome-scare-tv {
+  position: fixed;
+  left: var(--rome-x);
+  top: var(--rome-y);
+  width: min(92vw, 92vh);
+  background: transparent;
+  transform: translate(-50%, -50%) scale(0.008);
+  will-change: transform, opacity, filter;
+  animation: rome-scare-expand 2.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+.rome-scare-tv::before,
+.rome-scare-tv::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 2px;
+}
+
+.rome-scare-tv::before {
+  z-index: 2;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.18) 2px,
+    rgba(0, 0, 0, 0.18) 4px
+  );
+  mix-blend-mode: multiply;
+  opacity: 0.55;
+  animation: rome-scare-scan 0.08s steps(2) infinite;
+}
+
+.rome-scare-tv::after {
+  z-index: 3;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.03) 0 1px,
+      transparent 1px 3px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.02) 0 2px,
+      transparent 2px 4px
+    );
+  opacity: 0;
+  animation: rome-scare-static 2.8s steps(8) forwards;
+}
+
+.rome-scare-tv img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: contrast(1.15) saturate(1.1);
+  animation: rome-scare-tv-signal 2.8s steps(6) forwards;
+}
+
+@keyframes rome-scare-expand {
+  0% {
+    transform: translate(-50%, -50%) scale(0.008);
+    opacity: 0;
+    filter: brightness(3) contrast(0.4) blur(6px);
+  }
+  6% {
+    opacity: 1;
+    filter: brightness(1.8) contrast(0.7) blur(1px);
+  }
+  18% {
+    transform: translate(-50%, -50%) scale(0.22);
+    filter: brightness(1.2) contrast(1.1) blur(0);
+  }
+  42% {
+    transform: translate(-50%, -50%) scale(0.58);
+  }
+  58% {
+    transform: translate(-50%, -50%) scale(0.78);
+  }
+  68% {
+    transform: translate(calc(-50% + 4px), calc(-50% - 3px)) scale(0.84) rotate(-1.8deg);
+  }
+  72% {
+    transform: translate(calc(-50% - 5px), calc(-50% + 2px)) scale(0.86) rotate(2.2deg);
+  }
+  76% {
+    transform: translate(calc(-50% + 3px), calc(-50% + 4px)) scale(0.87) rotate(-1.4deg);
+  }
+  80% {
+    transform: translate(calc(-50% - 2px), calc(-50% - 2px)) scale(0.88) rotate(1deg);
+    opacity: 0.92;
+  }
+  84% {
+    transform: translate(calc(-50% + 6px), calc(-50% + 1px)) scale(0.89) rotate(-2.5deg);
+    opacity: 0.75;
+  }
+  88% {
+    transform: translate(calc(-50% - 4px), calc(-50% - 1px)) scale(0.9) rotate(1.8deg);
+    opacity: 0.45;
+  }
+  94% {
+    transform: translate(-50%, -50%) scale(0.91);
+    opacity: 0.12;
+    filter: brightness(0.6) contrast(1.4) blur(2px);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0.92);
+    opacity: 0;
+    filter: brightness(0.2) contrast(2) blur(8px);
+  }
+}
+
+@keyframes rome-scare-vignette {
+  0%, 12% {
+    background: transparent;
+  }
+  20%, 78% {
+    background: rgba(0, 0, 0, 0.35);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+@keyframes rome-scare-scan {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+}
+
+@keyframes rome-scare-static {
+  0%, 10% { opacity: 0.15; }
+  12%, 100% { opacity: 0.45; }
+}
+
+@keyframes rome-scare-tv-signal {
+  0%, 8% {
+    transform: skewX(0deg);
+  }
+  10% {
+    transform: skewX(2deg) translateX(2px);
+  }
+  12% {
+    transform: skewX(-3deg) translateX(-3px);
+  }
+  14% {
+    transform: skewX(1deg);
+  }
+  16%, 62% {
+    transform: none;
+  }
+  68%, 88% {
+    transform: skewX(1.5deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
 .product-size-guide {
   display: flex;
   align-items: flex-start;

@@ -1,6 +1,7 @@
 import { initFonts, preloadCursors } from './js/site.js';
 import { addToCart, initCartBadge } from './js/cart.js';
 import { startCheckout } from './js/checkout-flow.js';
+import { bindRomeScare, formatDescriptionHtml } from './js/rome-scare.js';
 import {
   escapeHtml,
   findVariant,
@@ -104,7 +105,8 @@ function renderProduct() {
   const description = stripHtml(product.description);
   const descriptionEl = document.getElementById('productDescription');
   if (description) {
-    descriptionEl.textContent = description;
+    descriptionEl.innerHTML = formatDescriptionHtml(description);
+    bindRomeScare(descriptionEl);
     descriptionEl.hidden = false;
   } else {
     descriptionEl.textContent = '';
