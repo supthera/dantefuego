@@ -8,7 +8,7 @@ export default {
   },
   descriptions: {
     '6a0f5f6fc72b45aa900e1b4f':
-      'Designed as a two-sided piece.\nBuilt on Champion\'s S700 eco hoodie — two-ply fleece, regular fit, and that iconic "C" on your left sleeve.\nThe front stays clean. Minimal.\nThe back carries Dante Fuego\'s signature Skull and Dagger print.\nWarm feel. Loud exit.\nBe lowkey — but make sure they never forget you left.'
+      'Designed as a two-sided piece.\nBuilt on Champion\'s S700 eco hoodie — two-ply fleece, regular fit,\nand that iconic "C" on your left sleeve.\nThe front stays clean. Minimal.\nThe back carries Dante Fuego\'s signature Skull and Dagger print.\nWarm feel. Loud exit.\nBe lowkey — but make sure they never forget you left.'
   },
   variantPrices: {
     '6a0f5f6fc72b45aa900e1b4f': {

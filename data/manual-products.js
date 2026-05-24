@@ -118,7 +118,7 @@ export default {
       published: true,
       title: 'EZ-369 (Ebony Zebra)',
       description:
-        'Custom Converse Chuck Taylor high-tops in ebony zebra canvas, silver eyelets, red DANTE FUEGO heel branding, and a black platform lug sole. Ships after manual procurement.',
+        'Dante Fuego reworks the All Star as the EZ-369: Ebony Zebra.\nThe original lightweight canvas, classic rubber sole, and timeless silhouette — the build that started a century of streetwear and outlasted every trend that tried to replace it. Dante brings that iconic construction into stark territory: a split-tone zebra print upper commands the standard rubber outsole, finished with the silver eyelets and black interior liner. Street certified.',
       sizeGuide: 'This style runs large. Order a half size down.',
       images: converse2Images,
       options: [
