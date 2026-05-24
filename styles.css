@@ -786,13 +786,11 @@ html.fonts-pending .footer-logo-text {
   letter-spacing: inherit;
   line-height: inherit;
   cursor: pointer;
-  text-decoration: underline dotted rgba(240,230,211,0.25);
-  text-underline-offset: 0.15em;
+  text-decoration: none;
 }
 
 .rome-trigger:hover {
   color: rgba(240,230,211,0.9);
-  text-decoration-color: rgba(200,40,40,0.55);
 }
 
 .rome-scare-overlay {
