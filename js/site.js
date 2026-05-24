@@ -1,3 +1,5 @@
+import './toast.js';
+
 export function initFonts() {
   return Promise.race([
     document.fonts.load('1em BertholdFraktur'),

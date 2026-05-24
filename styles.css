@@ -1567,3 +1567,123 @@ footer {
     gap: 1rem;
   }
 }
+
+@keyframes site-toast-border-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.site-toast-root {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 10001;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+  pointer-events: none;
+}
+
+.site-toast {
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateY(-0.35rem);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.site-toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.site-toast.is-leaving {
+  opacity: 0;
+  transform: translateY(-0.35rem);
+}
+
+.site-toast-dark {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: min(100%, 18rem);
+  max-width: min(calc(100vw - 2.5rem), 22rem);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  color: #e5e7eb;
+  background: transparent;
+  box-shadow:
+    0 0 28px 6px rgba(200, 240, 255, 0.14),
+    0 0 56px 12px rgba(184, 228, 225, 0.075),
+    0 0 84px 18px rgba(200, 232, 255, 0.04),
+    0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+.site-toast-dark::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(200vmin, 1400px);
+  height: min(200vmin, 1400px);
+  transform-origin: center;
+  background: linear-gradient(
+    90deg,
+    #b8e4e1,
+    #c8f0e8,
+    #d4c8f0,
+    #c4b5fd,
+    #f0c8e0,
+    #f8dce0,
+    #c8e6c9,
+    #ddd6fe,
+    #b8e0f0,
+    #bae6fd,
+    #e9d5ff,
+    #fecdd3,
+    #bbf7d0,
+    #c4b5fd,
+    #b8e4e1
+  );
+  animation: site-toast-border-spin 8s linear infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.site-toast-dark::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: calc(0.5rem - 2px);
+  background: #111111;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.site-toast-icon,
+.site-toast-message {
+  position: relative;
+  z-index: 2;
+}
+
+.site-toast-icon {
+  flex: 0 0 auto;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.site-toast-message {
+  font-family: var(--body-font);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-toast-dark::before {
+    animation: none;
+  }
+}
