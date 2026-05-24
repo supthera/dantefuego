@@ -106,6 +106,25 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
+    if (url.pathname === '/api/contact/config') {
+      if (req.method !== 'GET') {
+        sendJson(res, { error: 'Method not allowed' }, 405);
+        return;
+      }
+
+      const accessKey = process.env.WEB3FORMS_ACCESS_KEY || '';
+      if (!accessKey) {
+        sendJson(res, { error: 'Missing WEB3FORMS_ACCESS_KEY' }, 503);
+        return;
+      }
+
+      sendJson(res, {
+        accessKey,
+        contactEmail: process.env.CONTACT_EMAIL || process.env.NOTIFY_EMAIL || 'hello@dantefuego.com'
+      }, 200);
+      return;
+    }
+
     if (url.pathname === '/api/checkout/session-status') {
       if (req.method !== 'GET') {
         sendJson(res, { error: 'Method not allowed' }, 405);
