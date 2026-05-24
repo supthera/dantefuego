@@ -357,7 +357,6 @@ html.fonts-pending .footer-logo-text {
   border-color: rgba(180,30,30,0.5);
 }
 
-.df-card:hover .df-overlay { opacity: 1; }
 .df-card:hover .df-img-placeholder,
 .df-card:hover .df-img { transform: scale(1.06); }
 .df-card:hover .df-ember-1 { opacity: 1; animation: dfFloatEmber 2.5s ease-in-out infinite; }
@@ -400,49 +399,6 @@ html.fonts-pending .footer-logo-text {
   font-weight: 300;
   color: rgba(255,255,255,0.08);
   transition: transform 0.6s cubic-bezier(0.23,1,0.32,1);
-}
-
-.df-overlay {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0.35s cubic-bezier(0.23, 1, 0.32, 1);
-  display: flex;
-  align-items: flex-end;
-  padding: 20px;
-  pointer-events: none;
-}
-
-.df-overlay::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.28) 50%, transparent 100%);
-  pointer-events: none;
-}
-
-.df-overlay-btn {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: 100%;
-  padding: 11px 14px;
-  background: rgba(2, 44, 27, 0.38);
-  border: 1px solid rgba(2, 44, 27, 0.62);
-  color: rgba(240, 230, 211, 0.94);
-  font-family: var(--body-font);
-  font-size: 0.65rem;
-  font-weight: 400;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  text-align: center;
-  border-radius: 8px;
-  backdrop-filter: blur(8px) saturate(1.1);
-  -webkit-backdrop-filter: blur(8px) saturate(1.1);
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
 }
 
 .df-ember {

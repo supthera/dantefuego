@@ -64,7 +64,6 @@ export function renderProductCard(product) {
       <div class="df-ember df-ember-2"></div>
       <div class="df-ember df-ember-3"></div>
       ${badge}
-      <div class="df-overlay"><span class="df-overlay-btn">${soldOut ? 'View Details' : 'View Product'}</span></div>
     </div>
     <div class="df-info">
       <div class="df-meta">
