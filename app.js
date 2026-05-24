@@ -94,6 +94,43 @@ function initProductPrefetch() {
   if (!grid || grid.dataset.prefetchBound) return;
 
   grid.dataset.prefetchBound = '1';
+
+  grid.addEventListener('click', (event) => {
+    const card = event.target.closest('.df-card[data-href]');
+    if (!card || event.defaultPrevented) return;
+
+    const href = card.dataset.href;
+    if (!href) return;
+
+    if (event.metaKey || event.ctrlKey || event.shiftKey) {
+      window.open(href, '_blank', 'noopener');
+      return;
+    }
+
+    if (event.button !== 0) return;
+    location.assign(href);
+  });
+
+  grid.addEventListener('auxclick', (event) => {
+    if (event.button !== 1) return;
+
+    const card = event.target.closest('.df-card[data-href]');
+    if (!card?.dataset.href) return;
+
+    event.preventDefault();
+    window.open(card.dataset.href, '_blank', 'noopener');
+  });
+
+  grid.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+
+    const card = event.target.closest('.df-card[data-href]');
+    if (!card?.dataset.href) return;
+
+    event.preventDefault();
+    location.assign(card.dataset.href);
+  });
+
   grid.addEventListener(
     'pointerenter',
     (event) => {

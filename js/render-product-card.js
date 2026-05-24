@@ -57,7 +57,9 @@ export function renderProductCard(product) {
     ? `<img class="df-img" src="${escapeHtml(img.src)}" alt="${escapeHtml(product.title)}" width="900" height="1200" loading="lazy" decoding="async">`
     : `<div class="df-img-placeholder">${placeholder}</div>`;
 
-  return `<a class="${cardClass}" href="${productUrl(product.id, img?.src)}" data-product-id="${escapeHtml(product.id)}">
+  const href = productUrl(product.id, img?.src);
+
+  return `<article class="${cardClass}" role="link" tabindex="0" data-href="${escapeHtml(href)}" data-product-id="${escapeHtml(product.id)}" aria-label="${escapeHtml(product.title)}">
     <div class="df-img-wrap">
       ${imageMarkup}
       <div class="df-ember df-ember-1"></div>
@@ -71,7 +73,7 @@ export function renderProductCard(product) {
         ${metaMarkup}
       </div>
     </div>
-  </a>`;
+  </article>`;
 }
 
 export function renderProductGrid(products) {
