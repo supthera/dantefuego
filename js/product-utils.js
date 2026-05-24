@@ -153,7 +153,7 @@ function variantMatchesColor(variant, product, color) {
   return normalizeOptionLabel(getVariantColorLabel(variant, product)) === normalizeOptionLabel(color);
 }
 
-function getVariantSizeLabel(variant, product) {
+export function getVariantSizeLabel(variant, product) {
   const sizeIdx = getOptionIndex(product, 'size');
   if (sizeIdx >= 0) {
     const sizeValues = product.options[sizeIdx]?.values || [];
