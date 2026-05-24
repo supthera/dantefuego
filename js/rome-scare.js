@@ -8,17 +8,23 @@ const ROME_PATTERN = /\bRome\b/;
 let scareActive = false;
 let scareAudio = null;
 
+function descriptionToHtml(text) {
+  return escapeHtml(text).replace(/\n/g, '<br>');
+}
+
 export function formatDescriptionHtml(description) {
-  if (!description || !ROME_PATTERN.test(description)) {
-    return escapeHtml(description);
+  if (!description) return '';
+
+  if (!ROME_PATTERN.test(description)) {
+    return descriptionToHtml(description);
   }
 
   return description
     .split(ROME_PATTERN)
     .map((part, index, parts) => {
-      const chunk = escapeHtml(part);
+      const chunk = descriptionToHtml(part);
       if (index === parts.length - 1) return chunk;
-      return `${chunk}<button type="button" class="rome-trigger">Rome</button>`;
+      return `${chunk}<span class="rome-trigger" role="button" tabindex="0">Rome</span>`;
     })
     .join('');
 }
@@ -26,7 +32,7 @@ export function formatDescriptionHtml(description) {
 export function bindRomeScare(container) {
   if (!container) return;
 
-  preloadScareSound();
+  preloadScareAssets();
 
   container.querySelectorAll('.rome-trigger').forEach((trigger) => {
     if (trigger.dataset.bound) return;
@@ -35,11 +41,16 @@ export function bindRomeScare(container) {
       event.preventDefault();
       playRomeScare(trigger);
     });
+    trigger.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      playRomeScare(trigger);
+    });
   });
 }
 
 function playRomeScare(originEl) {
-  if (scareActive || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (scareActive) return;
 
   scareActive = true;
   const stopSound = playScareSound();
@@ -64,14 +75,35 @@ function playRomeScare(originEl) {
   overlay.appendChild(tv);
   document.body.appendChild(overlay);
 
+  let finished = false;
   const finish = () => {
+    if (finished) return;
+    finished = true;
     stopSound();
     overlay.remove();
     scareActive = false;
   };
 
-  overlay.addEventListener('animationend', finish, { once: true });
+  tv.addEventListener('animationend', (event) => {
+    if (
+      event.target === tv &&
+      (event.animationName === 'rome-scare-expand' ||
+        event.animationName === 'rome-scare-expand-reduced')
+    ) {
+      finish();
+    }
+  });
+
   window.setTimeout(finish, SCARE_DURATION_MS + 400);
+}
+
+function preloadScareAssets() {
+  preloadScareSound();
+
+  if (!preloadScareAssets.image) {
+    preloadScareAssets.image = new Image();
+    preloadScareAssets.image.src = SCARE_IMAGE;
+  }
 }
 
 function preloadScareSound() {

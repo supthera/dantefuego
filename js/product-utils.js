@@ -376,8 +376,16 @@ export function preloadImage(src) {
 }
 
 export function stripHtml(html) {
+  const raw = String(html || '');
+  if (!raw) return '';
+
+  // Plain-text descriptions (overrides) keep intentional line breaks.
+  if (!/<[a-z][\s\S]*>/i.test(raw)) {
+    return raw.trim();
+  }
+
   const div = document.createElement('div');
-  div.innerHTML = html || '';
+  div.innerHTML = raw.replace(/<\s*br\s*\/?>/gi, '\n');
   return (div.textContent || '').trim();
 }
 
