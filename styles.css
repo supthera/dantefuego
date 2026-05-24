@@ -158,7 +158,8 @@ html.fonts-pending .footer-logo-text {
   transition: color 0.3s ease;
 }
 
-.site-header-nav a:hover {
+.site-header-nav a:hover,
+.site-header-nav a.is-active {
   color: var(--gold);
 }
 
@@ -934,7 +935,7 @@ footer {
   width: min(640px, 86%);
   margin: 0 auto;
   border-top: 1px solid rgba(255,255,255,0.05);
-  padding: 3rem 2rem;
+  padding: 1.5rem 2rem 2rem;
   text-align: center;
 }
 
@@ -1414,7 +1415,8 @@ footer {
 .footer-logo-text {
   font-family: var(--logo-font);
   font-size: 1.4rem; font-weight: normal;
-  margin-bottom: 1.5rem; opacity: 0.4;
+  margin: 0;
+  opacity: 0.4;
   letter-spacing: 0.02em;
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
